@@ -1,0 +1,31 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="UTF-8">
+    <title>Insert title here</title>
+    </head>
+    <body>
+        <button onclick="myFunction()">Click me</button>
+        <dl id="blank"></dl>
+        <script>
+            function myFunction(){	
+                let obj = {
+                    backgroundColor : "#f00"
+                }
+                const url = window.location.href;
+                const baseUrl = url.includes("localhost")||url.includes("127.0.0.1")?"http://localhost:3000":"https://test-spring-boot-souvikdhang.herokuapp.com"
+                fetch(baseUrl + "/printall")
+                .then(response => response.json())
+                .then((data)=>{
+                    const container = document.querySelector("#blank");
+                    // document.querySelector("#blank").innerHTML=`<h1>${JSON.stringify(data)}</h1>`
+                    Object.entries(data).forEach(element => {
+                        container.innerHTML+=`<dt>${element[1]}</dt>`;
+                        // container.style = {...container.style,...obj};
+                        Object.assign(container.style,obj);
+                    });
+                });	
+            }
+        </script>  
+    </body>
+</html>

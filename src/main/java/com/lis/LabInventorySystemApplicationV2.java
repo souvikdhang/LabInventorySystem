@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 @SpringBootApplication
 @RestController
@@ -24,11 +26,17 @@ public class LabInventorySystemApplicationV2 {
 
 	public static void main(String[] args) throws ParseException {
 		SpringApplication.run(LabInventorySystemApplicationV2.class, args);
-		
-
-		
 	}
+	
 	@GetMapping
+	public ModelAndView servehtml() {
+	    ModelAndView modelAndView = new ModelAndView();
+	    modelAndView.setViewName("demo2.html");
+	    return modelAndView;
+	}
+		
+	
+	@GetMapping("/printall")
 	public UserProfile printall() throws ParseException {
 		
 
@@ -38,7 +46,6 @@ public class LabInventorySystemApplicationV2 {
 		user.setGender("male");
 		user.setName("souvik dhang");
 		user.setPhone_number("6290720902");
-//		user.setUser_id(1);
 		user.setEmail("souvik.dhang@gmail.com");
 		
 		System.out.println(user);
