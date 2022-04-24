@@ -1,13 +1,13 @@
-package com.lis;
+package com.lis.model;
 
 import java.text.ParseException;
 import java.time.LocalDate;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
 import org.springframework.stereotype.Component;
 
 
@@ -17,16 +17,13 @@ public class UserProfile {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-
 	private int user_id;
 	private String name;
 	private LocalDate dob;
 	private String gender;
 	private String address;
-	private String phone_number;
+	private String phoneNumber;
 	private String email;
-	
-	
 	
 	
 	public int getUser_id() {
@@ -44,8 +41,8 @@ public class UserProfile {
 	public LocalDate getDob() {
 		return dob;
 	}
-	public void setDob(int date, int month, int year) throws ParseException {
-		LocalDate dob = LocalDate.of(year,month,date);
+	public void setDob(LocalDate dob) throws ParseException {
+
 		this.dob = dob;
 	}
 	public String getGender() {
@@ -61,10 +58,10 @@ public class UserProfile {
 		this.address = address;
 	}
 	public String getPhone_number() {
-		return phone_number;
+		return phoneNumber;
 	}
 	public void setPhone_number(String phone_number) {
-		this.phone_number = phone_number;
+		this.phoneNumber = phone_number;
 	}
 	public String getEmail() {
 		return email;
@@ -75,7 +72,7 @@ public class UserProfile {
 	@Override
 	public String toString() {
 		return "UserProfile [user_id=" + user_id + ", name=" + name + ", dob=" + dob + ", gender=" + gender
-				+ ", address=" + address + ", phone_number=" + phone_number + ", email=" + email + "]";
+				+ ", address=" + address + ", phone_number=" + phoneNumber + ", email=" + email + "]";
 	}
 	
 	

@@ -35,15 +35,16 @@
 			<artifactId>ojdbc8</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
+		
 	</dependencies>
 
-	<packaging>jar</packaging>
+<packaging>war</packaging>
 
 	<build>
 		<plugins>
