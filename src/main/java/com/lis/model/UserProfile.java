@@ -4,9 +4,12 @@ import java.text.ParseException;
 import java.time.LocalDate;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 
 import org.springframework.stereotype.Component;
 
@@ -16,7 +19,10 @@ import org.springframework.stereotype.Component;
 public class UserProfile {
 	
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="user_sequence")
+	@SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence")
+//	@OneToOne(fetch = FetchType.EAGER, mappedBy = "UserProfile")
+	
 	private int user_id;
 	private String name;
 	private LocalDate dob;
@@ -24,8 +30,7 @@ public class UserProfile {
 	private String address;
 	private String phoneNumber;
 	private String email;
-	
-	
+		
 	public int getUser_id() {
 		return user_id;
 	}
@@ -74,7 +79,6 @@ public class UserProfile {
 		return "UserProfile [user_id=" + user_id + ", name=" + name + ", dob=" + dob + ", gender=" + gender
 				+ ", address=" + address + ", phone_number=" + phoneNumber + ", email=" + email + "]";
 	}
-	
-	
+		
 
 }

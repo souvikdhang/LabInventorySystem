@@ -9,5 +9,5 @@ import com.lis.model.UserProfile;
 public interface User_repo extends JpaRepository<UserProfile, Integer>{
 	Boolean existsByEmail(String email_id);
 //	Boolean existsByEmailId(String email_id);
-
+	boolean existsById(int user_id);
 }

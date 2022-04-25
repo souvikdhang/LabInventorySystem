@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface Credentials_repo extends JpaRepository<Credentials, Integer> {
-	void deleteById(int id);
+//	void deleteById(int id);
+	void deleteByUserId(int id);
 
+	Credentials getByUserId(int id);
+	boolean existsByUserId(int id);
 }
