@@ -165,8 +165,8 @@ public class AllController
 	}
 
 
-//@PostMapping("/addEquipment")
-//	public String addEquipment(@RequestParam )
+@PostMapping("/addEquipment")
+	public String addEquipment(@RequestParam("equipmentID") int equipmentID, @RequestParam("orgName") String orgName, @RequestParam("") )
 
 }
 		
