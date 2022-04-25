@@ -164,5 +164,9 @@ public class AllController
 	
 	}
 
+
+//@PostMapping("/addEquipment")
+//	public String addEquipment(@RequestParam )
+
 }
 		
