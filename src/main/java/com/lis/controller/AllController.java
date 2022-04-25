@@ -8,8 +8,10 @@ import javax.transaction.Transactional;
 
 import com.lis.dao.Credentials_repo;
 import com.lis.dao.User_repo;
+import com.lis.dao.equipmentRepo;
 import com.lis.model.Credentials;
 import com.lis.model.UserProfile;
+import com.lis.model.equipmentDetails;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,6 +35,9 @@ public class AllController
 	
 	@Autowired
 	Credentials currentUserCredentials;
+	
+	@Autowired
+	equipmentRepo er;
 	
 	
 	
@@ -192,7 +197,41 @@ public class AllController
 
 
 @PostMapping("/addEquipment")
-	public String addEquipment(@RequestParam("equipmentID") int equipmentID, @RequestParam("orgName") String orgName, @RequestParam("") )
+	public String addEquipment(@RequestParam("equipmentID") int equipmentID, @RequestParam("orgName") String orgName, @RequestParam("labName") String labName, @RequestParam("rackNumber") String rackNumber, @RequestParam("serverName") String serverName, @RequestParam("serverIPAddress") String serverIPAddress, @RequestParam("loginID") String loginID, @RequestParam("loginPassword") String loginPassword, @RequestParam("virtualMachine") int virtualMachine, @RequestParam("serverStatus") int serverStatus, @RequestParam("serverPower") int serverPower) {
+		
+		String s = "";
+		//DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		//System.out.println(users.existsByEmail(email));
+	
+			if(er.existsById(equipmentID) == false)
+				{				
+						equipmentDetails ed = new equipmentDetails();
+						//Credentials userCred=new Credentials();
+					
+						ed.setEquipmentID(equipmentID);
+						//LocalDate date = LocalDate.parse(dob,df);   
+						ed.setOrgName(orgName);
+						ed.setLabName(labName);
+						ed.setRackNumber(rackNumber);
+						ed.setLoginID(loginID);
+						ed.setLoginPassword(loginPassword);
+						ed.setServerName(serverName);
+						ed.setServerIPAddress(serverIPAddress);
+						ed.setServerStatus(serverStatus);
+						ed.setVirtualMachine(virtualMachine);
+						ed.setServerPower(serverPower);
+						er.saveAndFlush(ed);
+					
+						s="equipment added";
+				}
+			else {
+				s ="equipment already exists";
+				}
+			
+			return s;
+	
+	
+}
 
 }
 		
