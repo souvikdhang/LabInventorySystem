@@ -45,11 +45,12 @@ public class AllController
 	@Transactional
 	@PostMapping("/login")
 	public String login(@RequestParam("userId") int uid, @RequestParam("password") String password) {
-		System.out.println(users.findById(uid));
-		System.out.println(credentials.existsByUserId(uid));
+		System.out.println(users.getById(uid));
+		System.out.println(credentials.getById(uid));
+		System.out.println(password.trim());
 			if(users.existsById(uid)) {
-				currentUserCredentials = credentials.getByUserId(uid);
-				if(currentUserCredentials.get_password()==password) {
+				currentUserCredentials = credentials.getById(uid);
+				if(currentUserCredentials.get_password().equals(password.trim())) {
 					currentUserCredentials.set_LoginStatus(true);
 					credentials.saveAndFlush(currentUserCredentials);
 					currentUser=users.getById(uid);
@@ -69,8 +70,8 @@ public class AllController
 			DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		    System.out.println(users.existsByEmail(email));
 			
-		    if(currentUserCredentials.get_LoginStatus()==true) {
-		    	if(currentUserCredentials.get_UserType()=="administrator") {
+//		    if(currentUserCredentials.get_LoginStatus()==true) {
+//		    	if(currentUserCredentials.get_UserType()=="administrator") {
 		    		if(!users.existsByEmail(email)) 
 					{				
 							UserProfile user=new UserProfile();
@@ -84,14 +85,14 @@ public class AllController
 							user.setPhone_number(phone);
 							user.setEmail(email);
 							users.saveAndFlush(user);
-							
-							userCred.set_UserID(user.getUser_id());
+							userCred.setUser(user);
+//							userCred.set_UserID(user.getUser_id());
 							userCred.set_UserType(userType);
 							String password = name + date.getYear();
 							
 							userCred.set_password(password);
 							userCred.set_LoginStatus(false);
-//							userCred.setUser(user);
+
 							System.out.println(user);
 							
 
@@ -100,10 +101,10 @@ public class AllController
 							s = "Message.jsp";
 					}
 					else s ="userAlreadyExists.jsp";
-		    	}
-		    	else s = "access denied";
-		    }
-		    else s = "not logged in";
+//		    	}
+//		    	else s = "access denied";
+//		    }
+//		    else s = "not logged in";
 			return s;
 		}
 	
@@ -146,7 +147,7 @@ public class AllController
 				DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy");  
 				
 				UserProfile user=users.getById(uid);
-				Credentials userCred=credentials.getByUserId(uid);
+				Credentials userCred=credentials.getById(uid);
 				
 				if(requestParams.containsKey("address"))
 					user.setAddress(requestParams.get("address"));
@@ -191,8 +192,9 @@ public class AllController
 
 
 
-@PostMapping("/addEquipment")
-	public String addEquipment(@RequestParam("equipmentID") int equipmentID, @RequestParam("orgName") String orgName, @RequestParam("") )
+//@PostMapping("/addEquipment")
+//	public String addEquipment(@RequestParam("equipmentID") int equipmentID, @RequestParam("orgName") String orgName, @RequestParam("") )
 
 }
-		
+	
+

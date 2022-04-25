@@ -2,10 +2,6 @@ package com.lis;
 
 import java.text.ParseException;
 
-import com.lis.dao.Credentials_repo;
-import com.lis.dao.User_repo;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
