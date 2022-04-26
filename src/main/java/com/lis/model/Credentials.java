@@ -14,26 +14,26 @@ public class Credentials {
 //	   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="cred_sequence")
 //		@SequenceGenerator(name = "cred_sequence", sequenceName = "cred_sequence")
 	private int id;
-	private String UserType;
+	private String type;
 	private String password;
-	private boolean LoginStatus;
+	private boolean loginStatus;
 	
 	@OneToOne()
 	@MapsId
-	private UserProfile user;
+	private UserProfile profileObj;
 	
 	@Override
 	public String toString() {
-		return "Credentials [id=" + id + ", UserType=" + UserType + ", password=" + password + ", LoginStatus="
-				+ LoginStatus + ", user=" + user + "]";
+		return "Credentials [id=" + id + ", UserType=" + type + ", password=" + password + ", LoginStatus="
+				+ loginStatus + ", user=" + profileObj + "]";
 	}
 
 	public void set_UserType(String UserType) {
-		this.UserType = UserType;
+		this.type = UserType;
 	}
 	
 	public String get_UserType() {
-		return UserType;
+		return type;
 	}
 	
 	public void set_UserID(int UserID) {
@@ -45,11 +45,11 @@ public class Credentials {
 	}
 	
 	public UserProfile getUser() {
-		return user;
+		return profileObj;
 	}
 
 	public void setUser(UserProfile user) {
-		this.user = user;
+		this.profileObj = user;
 	}
 
 	public void set_password(String password) {
@@ -61,11 +61,11 @@ public class Credentials {
 	}
 	
 	public void set_LoginStatus(boolean b) {
-		this.LoginStatus = b;
+		this.loginStatus = b;
 	}
 	
 	public boolean get_LoginStatus() {
-		return LoginStatus;
+		return loginStatus;
 	}
 	
 	

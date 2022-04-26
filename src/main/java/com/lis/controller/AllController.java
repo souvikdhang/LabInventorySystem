@@ -2,8 +2,11 @@ package com.lis.controller;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
 import com.lis.dao.Credentials_repo;
@@ -12,8 +15,9 @@ import com.lis.model.Credentials;
 import com.lis.model.UserProfile;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,32 +37,29 @@ public class AllController
 	
 	@Autowired
 	Credentials currentUserCredentials;
-	
-	
-	
-	@RequestMapping("/")
-		public String home() {
-			return "file1.jsp";
 		
-		}
 	
 	@Transactional
 	@PostMapping("/login")
-	public String login(@RequestParam("userId") int uid, @RequestParam("password") String password) {
-		System.out.println(users.getById(uid));
-		System.out.println(credentials.getById(uid));
-		System.out.println(password.trim());
+	public String login(@RequestBody Map<String,String> body) {
+		
+//		System.out.println(Integer.parseInt(body.get("userId")));
+		int uid =Integer.parseInt(body.get("userId"));
+		String password = body.get("password");
+//		System.out.println(users.getById(uid));
+//		System.out.println(credentials.getById(uid));
+//		System.out.println(password.trim());
 			if(users.existsById(uid)) {
 				currentUserCredentials = credentials.getById(uid);
-				if(currentUserCredentials.get_password().equals(password.trim())) {
+				if(currentUserCredentials.get_password().equals(password.trim())) {				
 					currentUserCredentials.set_LoginStatus(true);
 					credentials.saveAndFlush(currentUserCredentials);
 					currentUser=users.getById(uid);
-					return "login successful";
+					return "loggedIn";
 				}
-				else return "wrong password";
+				else return "wrongPassword";
 			}
-			else return "user not found";
+			else return "userNotFound";
 	}
 	
 	
@@ -98,7 +99,7 @@ public class AllController
 
 							credentials.saveAndFlush(userCred);
 							
-							s = "Message.jsp";
+							s = "added";
 					}
 					else s ="userAlreadyExists.jsp";
 //		    	}
@@ -124,11 +125,11 @@ public class AllController
 						
 						s= "deleted";
 					}
-					else s ="user does not exist";
+					else s ="userDoesNotExist";
 				}
-				else s = "access denied";
+				else s = "accessDenied";
 	    }
-	    else s = "not logged in";
+	    else s = "notLoggedIn";
 		return s;
 	}
 		
@@ -188,6 +189,30 @@ public class AllController
 	return s;
 	
 	}
+
+	
+	@GetMapping("/viewAllUser")
+	@Transactional
+	public List<UserProfile> viewAllUser(@RequestParam("userType")String userType){
+		List<UserProfile> allUser = new ArrayList<>();
+		Iterable<Credentials> user = credentials.findAllByType(userType);
+		
+		for (Credentials u : user){
+			allUser.add(u.getUser());
+		}
+		return allUser;
+	}
+	
+	@GetMapping("/getUserType")
+	public String getUserType(@RequestParam("userId")int uid) {
+		return credentials.getById(uid).get_UserType();
+	}
+	
+//	@GetMapping("/test")
+//	public void test(){
+//		
+//		 System.out.println(	credentials.getByUserType("administrator").getUser());
+//	}
 
 
 
