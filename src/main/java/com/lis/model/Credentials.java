@@ -5,9 +5,11 @@ import javax.persistence.Id;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.stereotype.Component;
 @Component
 @Entity
+@DynamicUpdate
 public class Credentials {
 	
 	@Id

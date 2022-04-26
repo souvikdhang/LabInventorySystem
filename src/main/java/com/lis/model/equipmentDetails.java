@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class equipmentDetails {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int equipmentID;
 	private String orgName;
 	private String labName;
@@ -25,32 +24,8 @@ public class equipmentDetails {
 	private int serverStatus;
 	private int serverPower;
 	
-	/*public void set_equipmentID(int equipmentID) {
-		this.equipmentID = equipmentID;
-	}*/
-	
-	/*public int get_equipmentID() {
-		return equipmentID;
-	}*/
 	
 	
-	/*public void set_orgName(String orgName) {
-		this.orgName = orgName;
-	}*/
-	
-	/*public String get_orgName() {
-		return orgName;
-	}*/
-	
-	/*public void set_labName(String labName) {
-		this.labName = labName;
-	}*/
-	
-	/*public String get_labName() {
-		return labName;
-	}*/
-	
-
 	public int getEquipmentID() {
 		return equipmentID;
 	}
@@ -138,6 +113,16 @@ public class equipmentDetails {
 	public void setServerPower(int serverPower) {
 		this.serverPower = serverPower;
 	}
+
+	@Override
+	public String toString() {
+		return "equipmentDetails [equipmentID=" + equipmentID + ", orgName=" + orgName + ", labName=" + labName
+				+ ", rackNumber=" + rackNumber + ", serverName=" + serverName + ", serverIPAddress=" + serverIPAddress
+				+ ", loginID=" + loginID + ", loginPassword=" + loginPassword + ", virtualMachine=" + virtualMachine
+				+ ", serverStatus=" + serverStatus + ", serverPower=" + serverPower + "]";
+	}
+	
+	
 
 	
 	

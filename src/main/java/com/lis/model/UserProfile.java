@@ -9,16 +9,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.stereotype.Component;
 
 
 @Component
 @Entity
+@DynamicUpdate
 public class UserProfile {
 	
 	@Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="user_sequence")
-	@SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="user_sequence_2")
+	@SequenceGenerator(name = "user_sequence_2", sequenceName = "user_sequence_2", allocationSize = 1, initialValue= 1)
 //	@OneToOne(fetch = FetchType.EAGER, mappedBy = "UserProfile")
 	
 	private int user_id;
