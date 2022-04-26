@@ -1,9 +1,12 @@
 package com.lis.model;
 
+import java.time.LocalDate;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 import org.springframework.stereotype.Component;
 
@@ -12,13 +15,21 @@ import org.springframework.stereotype.Component;
 public class requests {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator="user_sequence_2")
+	@SequenceGenerator(name = "user_sequence_2", sequenceName = "user_sequence_2", allocationSize = 1, initialValue= 1)
 	private int requestID;
 	private int equipmentID;
 	private int userID;
 	private String requestStatus;
+	private LocalDate dateofRequest;
 	
 	
+	public LocalDate getDate() {
+		return dateofRequest;
+	}
+	public void setDate(LocalDate d) {
+		this.dateofRequest = d;
+	}
 	public int getRequestID() {
 		return requestID;
 	}
@@ -48,8 +59,10 @@ public class requests {
 	@Override
 	public String toString() {
 		return "requests [requestID=" + requestID + ", equipmentID=" + equipmentID + ", userID=" + userID
-				+ ", requestStatus=" + requestStatus + "]";
+				+ ", requestStatus=" + requestStatus + ", date=" + dateofRequest + "]";
 	}
+	
+	
 	
 
 }
