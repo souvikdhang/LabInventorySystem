@@ -2,15 +2,22 @@ package com.lis.controller;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.transaction.Transactional;
 
 import com.lis.dao.Credentials_repo;
 import com.lis.dao.User_repo;
+import com.lis.dao.equipmentAvailabilityRepo;
 import com.lis.dao.equipmentRepo;
+import com.lis.dao.requestRepo;
 import com.lis.model.Credentials;
 import com.lis.model.UserProfile;
+import com.lis.model.equipmentAvailability;
 import com.lis.model.equipmentDetails;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +46,12 @@ public class AllController
 	@Autowired
 	equipmentRepo er;
 	
+	@Autowired
+	requestRepo rer;
+	
+	@Autowired
+	equipmentAvailabilityRepo ear;
+	
 	
 	
 	@RequestMapping("/")
@@ -50,11 +63,12 @@ public class AllController
 	@Transactional
 	@PostMapping("/login")
 	public String login(@RequestParam("userId") int uid, @RequestParam("password") String password) {
-		System.out.println(users.findById(uid));
-		System.out.println(credentials.existsByUserId(uid));
+		System.out.println(users.getById(uid));
+		System.out.println(credentials.getById(uid));
+		System.out.println(password.trim());
 			if(users.existsById(uid)) {
-				currentUserCredentials = credentials.getByUserId(uid);
-				if(currentUserCredentials.get_password()==password) {
+				currentUserCredentials = credentials.getById(uid);
+				if(currentUserCredentials.get_password().equals(password.trim())) {
 					currentUserCredentials.set_LoginStatus(true);
 					credentials.saveAndFlush(currentUserCredentials);
 					currentUser=users.getById(uid);
@@ -74,8 +88,8 @@ public class AllController
 			DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		    System.out.println(users.existsByEmail(email));
 			
-		    if(currentUserCredentials.get_LoginStatus()==true) {
-		    	if(currentUserCredentials.get_UserType()=="administrator") {
+//		    if(currentUserCredentials.get_LoginStatus()==true) {
+//		    	if(currentUserCredentials.get_UserType()=="administrator") {
 		    		if(!users.existsByEmail(email)) 
 					{				
 							UserProfile user=new UserProfile();
@@ -89,14 +103,14 @@ public class AllController
 							user.setPhone_number(phone);
 							user.setEmail(email);
 							users.saveAndFlush(user);
-							
-							userCred.set_UserID(user.getUser_id());
+							userCred.setUser(user);
+//							userCred.set_UserID(user.getUser_id());
 							userCred.set_UserType(userType);
 							String password = name + date.getYear();
 							
 							userCred.set_password(password);
 							userCred.set_LoginStatus(false);
-//							userCred.setUser(user);
+
 							System.out.println(user);
 							
 
@@ -105,10 +119,10 @@ public class AllController
 							s = "Message.jsp";
 					}
 					else s ="userAlreadyExists.jsp";
-		    	}
-		    	else s = "access denied";
-		    }
-		    else s = "not logged in";
+//		    	}
+//		    	else s = "access denied";
+//		    }
+//		    else s = "not logged in";
 			return s;
 		}
 	
@@ -136,6 +150,21 @@ public class AllController
 		return s;
 	}
 		
+	
+	@PostMapping("/viewAllUsers")
+	public String viewAllUsers() 
+{
+		String s = "";
+		List<UserProfile> ls = users.findAll();
+		Iterator itr = ls.iterator();
+		while(itr.hasNext()) {
+			UserProfile usp = (UserProfile) itr.next();
+			s += usp.toString()+"\n";
+		}
+		
+		return s;
+		
+}
 
 
 @PostMapping("/modifyUser")
@@ -151,7 +180,7 @@ public class AllController
 				DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy");  
 				
 				UserProfile user=users.getById(uid);
-				Credentials userCred=credentials.getByUserId(uid);
+				Credentials userCred=credentials.getById(uid);
 				
 				if(requestParams.containsKey("address"))
 					user.setAddress(requestParams.get("address"));
@@ -197,19 +226,21 @@ public class AllController
 
 
 @PostMapping("/addEquipment")
+@Transactional
 	public String addEquipment(@RequestParam("equipmentID") int equipmentID, @RequestParam("orgName") String orgName, @RequestParam("labName") String labName, @RequestParam("rackNumber") String rackNumber, @RequestParam("serverName") String serverName, @RequestParam("serverIPAddress") String serverIPAddress, @RequestParam("loginID") String loginID, @RequestParam("loginPassword") String loginPassword, @RequestParam("virtualMachine") int virtualMachine, @RequestParam("serverStatus") int serverStatus, @RequestParam("serverPower") int serverPower) {
 		
 		String s = "";
 		//DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		//System.out.println(users.existsByEmail(email));
-	
+		equipmentAvailability ea = new equipmentAvailability();
 			if(er.existsById(equipmentID) == false)
 				{				
 						equipmentDetails ed = new equipmentDetails();
 						//Credentials userCred=new Credentials();
+						
+						
 					
 						ed.setEquipmentID(equipmentID);
-						//LocalDate date = LocalDate.parse(dob,df);   
 						ed.setOrgName(orgName);
 						ed.setLabName(labName);
 						ed.setRackNumber(rackNumber);
@@ -221,17 +252,71 @@ public class AllController
 						ed.setVirtualMachine(virtualMachine);
 						ed.setServerPower(serverPower);
 						er.saveAndFlush(ed);
+						ea.setAvailableamount(1);
+						ea.setEquipmentID(equipmentID);
+						ear.saveAndFlush(ea);
 					
 						s="equipment added";
 				}
 			else {
-				s ="equipment already exists";
+					equipmentAvailability eav = ear.findById(equipmentID).orElse(null);
+					int val = eav.getAvailableamount();
+					eav.setAvailableamount(val+1);
+					ear.save(eav);
+					s ="equipment already exists";
 				}
 			
 			return s;
-	
-	
 }
 
-}
+@PostMapping("/deleteEquipment")
+@Transactional
+	public String deleteEquipment(@RequestParam("equipmentID") int equipmentID) {
+		String s = "";
+		equipmentAvailability ea = new equipmentAvailability();
+		if(er.existsById(equipmentID)) {
+			equipmentAvailability eavl = ear.findById(equipmentID).orElse(null);
+			int a = eavl.getAvailableamount() - 1;
+			if(a == 0) {
+				ear.deleteById(equipmentID);
+				er.deleteById(equipmentID);
+				s = "Equipment Deleted Successfully";
+				
+			}
+			
+			else {
+				eavl.setAvailableamount(a);
+				ear.save(eavl);
+				s = "Equipment Deleted Successfully";
+			}
+			
+		}
 		
+		else {
+			s = "Equipment doesnot exists";
+		}
+		
+		return s;
+
+	}
+
+
+@PostMapping("/viewAllEquipments")
+@Transactional
+	public String viewAllEquipments() {
+		String s = "";
+		List<equipmentDetails> ls = er.findAll();
+		Iterator itr = ls.iterator();
+		while(itr.hasNext()) {
+			equipmentDetails eqd = (equipmentDetails) itr.next();
+			s += eqd.toString()+"\n";
+		}
+		
+		return s;
+
+		
+	}
+
+}
+	
+
