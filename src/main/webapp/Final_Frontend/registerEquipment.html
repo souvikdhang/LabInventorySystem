@@ -5,11 +5,14 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" href="Final_Frontend/lab_icon.png">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
-    <title>Document</title>
+    <title>Lab Inventory Syatem</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 <body>
 
@@ -25,10 +28,10 @@
             <ul class="navbar-nav mr-auto"></ul>
             <ul class="navbar-nav">
                 <li class="nav-item active">
-                    <a class="nav-link" th:href="@{/}" href="#">home</a>
+                    <a class="nav-link" href="/homePage">Home</a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">Sign Up</a>
+                    <a class="nav-link" href="/logout">Logout</a>
                 </li>
 
             </ul>
@@ -40,37 +43,155 @@
     <div class="col-sm-6">
         <h3 style="margin-top: 10px">Add Equipment Now</h3>
         <p>Please fill out this to add the new equipment</p>
-        <form th:action="@{/register}" th:object="${user}" method="post">
-            <div class="form-group">
-                <label for="Name">Name</label>
-                <input type="text" name="Name" id="Name" required placeholder="Your equipment name" class="form-control form-control-lg">
-            </div>
-            <div class="form-group">
-                <label for="Organization Name">Organization name</label>
-                <input type="text" name="Organization name" id="Phone Number" required placeholder="Your organization name" class="form-control form-control-lg">
-            </div>
-            <div class="form-group">
-                <label for="Lab name">Lab name</label>
-                <input type="text" name="Lab name" id="Address" required placeholder="Your Lab name" class="form-control form-control-lg">
-            </div>
-            <div class="form-group">
-                <label for="email">Email address</label>
-                <input type="email" class="form-control form-control-lg" required minlength="6" placeholder="Email" name="email" id="email"
-                       aria-describedby="emailHelp">
-                <small id="emailHelp" class="form-text text-muted">We'll never share your email with
-                    anyone else.</small>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" class="form-control form-control-lg" required placeholder="Password" name="password"
-                       id="password">
-            </div>
+        
+        <div class="form-group">
+            <label for="Organization Name">Organization name</label>
+            <input type="text" name="Organization name" id="orgName" required placeholder="Your organization name" class="form-control form-control-lg">
+        </div>
 
-            <input type="submit" value="Add Equipment" class="btn btn-primary btn-block">
+        <div class="form-group">
+            <label for="Lab name">Lab name</label>
+            <input type="text" name="Lab name" id="labName" required placeholder="Your Lab name" class="form-control form-control-lg">
+        </div>
+
+        <div class="form-group">
+            <label for="Rack Number">Rack Number</label>
+            <input type="email" class="form-control form-control-lg" required minlength="6" placeholder="Email" name="email" id="rackNumber" aria-describedby="emailHelp">
+        </div>
+
+        <div class="form-group">
+            <label for="Server name">Server name</label>
+            <input type="Server name" class="form-control form-control-lg" required placeholder="Server name" name="Server name"
+                    id="serverName">
+        </div>
+
+        <div class="form-group">
+            <label for="Server IP Address">Server IP Address</label>
+            <input type="Server IP Address" class="form-control form-control-lg" required placeholder="Server IP Address" name="Server IP Address"
+                    id="serverIpAddress">
+        </div>
+
+        <div class="form-group">
+            <label for="Login ID">Login ID</label>
+            <input type="Login ID" class="form-control form-control-lg" required placeholder="Login ID" name="Login ID"
+                    id="loginId">
+        </div>
+
+        <div class="form-group">
+            <label for="Login Password">Login Password</label>
+            <input type="Login Password" class="form-control form-control-lg" required placeholder="Login Password" name="Login Password"
+                    id="loginPassword">
+        </div>
+
+        <div class="form-group">
+            <label for="Virtual Machine">Virtual Machine</label>
+            <div class="dropdown"  id="dropdownMenuButton_parent1">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    select
+                </button>
+                <div id="virtualMachine" class="dropdown-menu" aria-labelledby="dropdownMenuButton" >
+                    <option value="0" class="dropdown-item" href="#">Physical Server</option>
+                    <option value="1" class="dropdown-item" href="#">Virtual Machine</option>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="Server Status">Server Status</label>
+            <div class="dropdown"  id="dropdownMenuButton_parent2">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    select 
+                </button>
+                <div id="serverStatus" class="dropdown-menu" aria-labelledby="dropdownMenuButton" >
+                    <option value="0" class="dropdown-item" href="#">Operational, Not-In-Use</option>
+                    <option value="1" class="dropdown-item" href="#">Operational, In-Use</option>
+                    <option value="2" class="dropdown-item" href="#">Non-Operational</option>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="Server Power">Server Power</label>
+            <input type="Server Power" class="form-control form-control-lg" required placeholder="Server Power" name="Server Power"
+                    id="serverPower">
+        </div>
+
+        <button onclick="callLogin()" class="btn btn-primary btn-block">Add Equipment</button>
             
-        </form>
     </div>
 </div>
+
+<script>
+
+        var serverStatus;
+        var virtualMachine;
+        $( document ).ready(function() {
+            $('#serverStatus option').click(function(){
+                serverStatus = $(this).text();
+                $(this).parents('.dropdown').find('.dropdown-toggle').html(serverStatus);
+            })
+             
+            $('#virtualMachine option').click(function(){
+                virtualMachine = $(this).text();
+                $(this).parents('.dropdown').find('.dropdown-toggle').html(virtualMachine); 
+            })
+        });
+
+    function callLogin(){
+
+        var orgName = document.getElementById("orgName").value;
+        var labName = document.getElementById("labName").value;
+        var serverName = document.getElementById("serverName").value;
+        var rackNumber = document.getElementById("rackNumber").value;
+        var serverIpAddress = document.getElementById("serverIpAddress").value;
+        var loginId = document.getElementById("loginId").value;
+        var loginPassword = document.getElementById("loginPassword").value;
+        if(serverStatus==='Operational, Not-In-Use')serverStatus=0;
+        if(serverStatus==='Operational, In-Use')serverStatus=1;
+        if(serverStatus==='Non-Operational')serverStatus=2;
+        if(virtualMachine==='Physical Server')virtualMachine=0;
+        if(virtualMachine==='Virtual Machine')virtualMachine=1;
+
+        serverStatus=serverStatus-0;
+        virtualMachine=virtualMachine-0;
+        var serverPower = document.getElementById("serverPower").value-0;
+
+        var url = 'http://localhost:3000/addEquipment?orgName='+orgName+'&labName='+labName+'&rackNumber='+rackNumber+'&serverName='+serverName+'&serverIPAddress='+serverIpAddress+'&loginID='+loginId+'&loginPassword='+loginPassword+'&virtualMachine='+virtualMachine+'&serverStatus='+serverStatus+'&serverPower='+serverPower
+        
+        
+        axios({
+            method: 'post',
+            url: url,
+
+            }) 
+            .then(response => response.data)
+                .then((data)=>{
+                    console.log(data);
+                    if(data==='loggedIn')
+                    {
+                        location.replace('http://localhost:3000/homePage?userId='+ userId)
+                    }
+                    else if(data===`userNotFound`)
+                    {
+                        document.querySelector('#setInvalid').innerHTML='User not found';
+                        document.querySelector('#setInvalid').style.display='block';
+                    }
+                    else if(data===`wrongPassword`)
+                    {
+                        document.querySelector('#setInvalid').innerHTML='Invalid Password';
+                        document.querySelector('#setInvalid').style.display='block';
+                    }
+                })
+
+                // .catch(
+                //     (e) => {
+                //         document.querySelector('#setInvalid').style.display='block';
+                //     }
+                // )
+                
+    }
+
+</script>
 
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>

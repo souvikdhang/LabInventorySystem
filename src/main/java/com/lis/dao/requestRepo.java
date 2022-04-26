@@ -1,9 +1,8 @@
 package com.lis.dao;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.lis.model.equipmentDetails;
 import com.lis.model.requests;
+
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface requestRepo extends JpaRepository<requests, Integer>{ 
 

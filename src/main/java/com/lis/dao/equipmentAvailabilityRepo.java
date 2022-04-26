@@ -2,13 +2,13 @@ package com.lis.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.lis.model.equipmentAvailability;
-import com.lis.model.equipmentDetails;
+import com.lis.model.EquipmentAvailability;
 
-public interface equipmentAvailabilityRepo extends JpaRepository<equipmentAvailability, Integer>{
+
+public interface EquipmentAvailabilityRepo extends JpaRepository<EquipmentAvailability, Integer>{
 	
-	public static void setAvailableAmount(int x, int y) {
-		
-	}
+//	public static void setAvailableAmount(int x, int y) {
+//		
+//	}
 
 }

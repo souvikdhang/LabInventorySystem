@@ -1,5 +1,6 @@
 package com.lis.controller;
 
+import java.net.URI;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -8,19 +9,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
 import com.lis.dao.Credentials_repo;
-import com.lis.dao.User_repo;
-import com.lis.dao.equipmentAvailabilityRepo;
-import com.lis.dao.equipmentRepo;
+import com.lis.dao.EquipmentAvailabilityRepo;
+import com.lis.dao.EquipmentRepo;
+import com.lis.dao.UserRepo;
 import com.lis.dao.requestRepo;
 import com.lis.model.Credentials;
+import com.lis.model.EquipmentAvailability;
+import com.lis.model.EquipmentDetails;
 import com.lis.model.UserProfile;
-import com.lis.model.equipmentAvailability;
-import com.lis.model.equipmentDetails;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,97 +40,108 @@ public class AllController {
 	Credentials_repo credentials;
 
 	@Autowired
-	User_repo users;
+	UserRepo users;
 
 	@Autowired
-	equipmentRepo er;
+	EquipmentRepo er;
 
 	@Autowired
 	requestRepo rer;
 
 	@Autowired
-	equipmentAvailabilityRepo ear;
+	EquipmentAvailabilityRepo ear;
 
 	@Autowired
 	UserProfile currentUser;
 
 	@Autowired
 	Credentials currentUserCredentials;
+	
+	public ResponseEntity<Void> redirect(String page)
+	{
+		String url = "http://localhost:3000/"+page;
+        System.out.println(url);
+        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(page)).build();
+    }
 
 	@Transactional
 	@PostMapping("/login")
-	public String login(@RequestBody Map<String, String> body) {
-
-		// System.out.println(Integer.parseInt(body.get("userId")));
+	public String login(@RequestBody Map<String, String> body, HttpServletResponse response) 
+	{
 		int uid = Integer.parseInt(body.get("userId"));
 		String password = body.get("password");
-		// System.out.println(users.getById(uid));
-		// System.out.println(credentials.getById(uid));
-		// System.out.println(password.trim());
+		
 		if (users.existsById(uid)) {
 			currentUserCredentials = credentials.getById(uid);
 			if (currentUserCredentials.get_password().equals(password.trim())) {
 				currentUserCredentials.set_LoginStatus(true);
 				credentials.saveAndFlush(currentUserCredentials);
-				currentUser = users.getById(uid);
+				currentUser = users.getById(uid);			
+				ResponseCookie userIdCookie =ResponseCookie.from("userId",Integer.toString(uid))
+			            .httpOnly(false)
+			            .sameSite("None")
+			            .secure(true)
+			            .path("/")
+			            .maxAge(Math.toIntExact(2147483647))
+			            .build();
+				response.addHeader("Set-Cookie", userIdCookie.toString());			
 				return "loggedIn";
 			} else
 				return "wrongPassword";
 		} else
 			return "userNotFound";
 	}
+	
 
 	@PostMapping("/addUser")
 	@Transactional
-	public String addUser(@RequestParam("name") String name, @RequestParam("date") String dob,
+	public String addUser(@CookieValue(name = "userId", required=false) String uidCookie, 
+			@RequestParam("name") String name, @RequestParam("date") String dob,
 			@RequestParam("gender") String gender, @RequestParam("address") String address,
 			@RequestParam("phoneNumber") String phone, @RequestParam("emailId") String email,
-			@RequestParam("userType") String userType) throws ParseException {
+			@RequestParam("userType") String userType) throws ParseException 
+	{
 		String s = "";
 		DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		System.out.println(users.existsByEmail(email));
-
-		// if(currentUserCredentials.get_LoginStatus()==true) {
-		// if(currentUserCredentials.get_UserType()=="administrator") {
-		if (!users.existsByEmail(email)) {
-			UserProfile user = new UserProfile();
-			Credentials userCred = new Credentials();
-
-			user.setAddress(address);
-			LocalDate date = LocalDate.parse(dob, df);
-			user.setDob(date);
-			user.setGender(gender);
-			user.setName(name);
-			user.setPhone_number(phone);
-			user.setEmail(email);
-			users.saveAndFlush(user);
-			userCred.setUser(user);
-			// userCred.set_UserID(user.getUser_id());
-			userCred.set_UserType(userType);
-			String password = name + date.getYear();
-
-			userCred.set_password(password);
-			userCred.set_LoginStatus(false);
-
-			System.out.println(user);
-
-			credentials.saveAndFlush(userCred);
-
-			s = "added";
-		} else
-			s = "userAlreadyExists.jsp";
-		// }
-		// else s = "access denied";
-		// }
-		// else s = "not logged in";
+//		if(!uidCookie.equals(null)) {
+//			if(credentials.getById(Integer.parseInt(uidCookie)).get_UserType().equals("administrator")) {
+				if (!users.existsByEmail(email)) {
+					UserProfile user = new UserProfile();
+					Credentials userCred = new Credentials();
+					user.setAddress(address);
+					LocalDate date = LocalDate.parse(dob, df);
+					user.setDob(date);
+					user.setGender(gender);
+					user.setName(name);
+					user.setPhone_number(phone);
+					user.setEmail(email);
+					users.saveAndFlush(user);
+					userCred.setUser(user);
+					userCred.set_UserType(userType);
+					String password = name + date.getYear();
+					userCred.set_password(password);
+					userCred.set_LoginStatus(false);
+					System.out.println(user);
+					credentials.saveAndFlush(userCred);
+					s = "userAdded";
+				} 
+				else
+					s = "userAlreadyExists";
+//			 }
+//			 else s = "redirect:/homePage";
+//		 }
+//		 else s = "redirect:/";
 		return s;
 	}
 
+	
 	@PostMapping("/deleteUser")
-	public String deleteUser(@RequestParam("userId") int uid) {
+	public String deleteUser(@CookieValue(name = "userId", required=false) String uidCookie, @RequestParam("userId") int uid) 
+	{
 		String s = "";
-		if (currentUserCredentials.get_LoginStatus() == true) {
-			if (currentUserCredentials.get_UserType() == "administrator") {
+		if (!uidCookie.equals(null)) {
+			if (credentials.getById(Integer.parseInt(uidCookie)).get_UserType().equals( "administrator")) {
 				if (credentials.existsById(uid)) {
 					credentials.deleteById(uid);
 					users.deleteById(uid);
@@ -132,23 +149,27 @@ public class AllController {
 					users.flush();
 					credentials.flush();
 
-					s = "deleted";
-				} else
+					s = "userDeleted";
+				} 
+				else
 					s = "userDoesNotExist";
-			} else
-				s = "accessDenied";
-		} else
-			s = "notLoggedIn";
+			 }
+			 else s = "redirect:/homePage";
+		 }
+		 else s = "redirect:/";
 		return s;
 	}
 
 	
 	@PostMapping("/modifyUser")
-	public String modifyUser(@RequestParam Map<String, String> requestParams) throws ParseException {
+	public String modifyUser(@CookieValue(name = "userId", required=false) String uidCookie, 
+			@RequestParam Map<String, String> requestParams) throws ParseException 
+	{
 
 		String s = "";
-		if (currentUserCredentials.get_LoginStatus() == true) {
-			if (currentUserCredentials.get_UserType() == "administrator") {
+		if (!uidCookie.equals(null)) {
+			if (credentials.getById(Integer.parseInt(uidCookie)).get_UserType().equals( "administrator")) {
+				
 				int uid = Integer.parseInt(requestParams.get("userId"));
 				if (users.existsById(uid) == false) {
 
@@ -185,21 +206,21 @@ public class AllController {
 					users.saveAndFlush(user);
 					credentials.saveAndFlush(userCred);
 
-					s = "updated";
+					s = "userUpdated";
 				} else
-					s = "user does not exist";
-			} else
-				s = "access denied";
-		} else
-			s = "not logged in";
+					s = "userDoesNotExistt";
+			 }
+			 else s = "redirect:/homePage";
+		 }
+		 else s = "redirect:/";
 		return s;
-
 	}
 	
 
 	@GetMapping("/viewAllUser")
 	@Transactional
 	public List<UserProfile> viewAllUser(@RequestParam("userType") String userType) {
+		redirect("homePage");
 		List<UserProfile> allUser = new ArrayList<>();
 		Iterable<Credentials> user = credentials.findAllByType(userType);
 
@@ -208,100 +229,107 @@ public class AllController {
 		}
 		return allUser;
 	}
+	
 
 	@GetMapping("/getUserType")
 	public String getUserType(@RequestParam("userId") int uid) {
 		return credentials.getById(uid).get_UserType();
 	}
+	
 
-	// @GetMapping("/test")
-	// public void test(){
-	//
-	// System.out.println( credentials.getByUserType("administrator").getUser());
-	// }
+//	 @GetMapping("/test")
+//	 public void test(){
+//	
+//	 System.out.println( credentials.getByUserType("administrator").getUser());
+//	 }
 
+	
 	@PostMapping("/addEquipment")
 	@Transactional
-	public String addEquipment(@RequestParam("equipmentID") int equipmentID, @RequestParam("orgName") String orgName,
+	public String addEquipment(@CookieValue(name = "userId", required=false) String uidString,
+			@RequestParam("orgName") String orgName,
 			@RequestParam("labName") String labName, @RequestParam("rackNumber") String rackNumber,
 			@RequestParam("serverName") String serverName, @RequestParam("serverIPAddress") String serverIPAddress,
 			@RequestParam("loginID") String loginID, @RequestParam("loginPassword") String loginPassword,
 			@RequestParam("virtualMachine") int virtualMachine, @RequestParam("serverStatus") int serverStatus,
-			@RequestParam("serverPower") int serverPower) {
-
+			@RequestParam("serverPower") int serverPower)
+	{
 		String s = "";
-		// DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-		// System.out.println(users.existsByEmail(email));
-		equipmentAvailability ea = new equipmentAvailability();
-		if (er.existsById(equipmentID) == false) {
-			equipmentDetails ed = new equipmentDetails();
-			// Credentials userCred=new Credentials();
-			ed.setEquipmentID(equipmentID);
-			ed.setOrgName(orgName);
-			ed.setLabName(labName);
-			ed.setRackNumber(rackNumber);
-			ed.setLoginID(loginID);
-			ed.setLoginPassword(loginPassword);
-			ed.setServerName(serverName);
-			ed.setServerIPAddress(serverIPAddress);
-			ed.setServerStatus(serverStatus);
-			ed.setVirtualMachine(virtualMachine);
-			ed.setServerPower(serverPower);
-			er.saveAndFlush(ed);
-			ea.setAvailableamount(1);
-			ea.setEquipmentID(equipmentID);
-			ear.saveAndFlush(ea);
-
-			s = "equipment added";
-		} else {
-			equipmentAvailability eav = ear.findById(equipmentID).orElse(null);
-			int val = eav.getAvailableamount();
-			eav.setAvailableamount(val + 1);
-			ear.save(eav);
-			s = "equipment already exists";
-		}
-
+		System.out.println(uidString);
+		if (uidString!=null) {
+			if (credentials.getById(Integer.parseInt(uidString)).get_UserType().equals( "administrator")) {
+				
+				EquipmentAvailability ea = new EquipmentAvailability();
+					EquipmentDetails ed = new EquipmentDetails();
+					ed.setOrgName(orgName);
+					ed.setLabName(labName);
+					ed.setRackNumber(rackNumber);
+					ed.setLoginID(loginID);
+					ed.setLoginPassword(loginPassword);
+					ed.setServerName(serverName);
+					ed.setServerIPAddress(serverIPAddress);
+					ed.setServerStatus(serverStatus);
+					ed.setVirtualMachine(virtualMachine);
+					ed.setServerPower(serverPower);
+					er.saveAndFlush(ed);
+					ea.setDetails(ed);
+					ea.setAvailableamount(1);
+					ear.saveAndFlush(ea);
+					s = "equipment added";				
+			}
+			 else redirect("/homePage");
+		 }
+		 else s = "redirect:/";
 		return s;
 	}
 
+	
 	@PostMapping("/deleteEquipment")
 	@Transactional
-	public String deleteEquipment(@RequestParam("equipmentID") int equipmentID) {
+	public String deleteEquipment(@CookieValue(name = "userId", required=false) String uidString, @RequestParam("equipmentID") int equipmentID) {
 		String s = "";
-		if (er.existsById(equipmentID)) {
-			equipmentAvailability eavl = ear.findById(equipmentID).orElse(null);
-			int a = eavl.getAvailableamount() - 1;
-			if (a == 0) {
-				ear.deleteById(equipmentID);
-				er.deleteById(equipmentID);
-				s = "Equipment Deleted Successfully";
-
-			}
-
-			else {
-				eavl.setAvailableamount(a);
-				ear.save(eavl);
-				s = "Equipment Deleted Successfully";
-			}
-
-		}
-
-		else {
-			s = "Equipment doesnot exists";
-		}
+		if (!uidString.equals(null)) {
+			if (credentials.getById(Integer.parseInt(uidString)).get_UserType().equals( "administrator")) {
+				if (er.existsById(equipmentID)) {
+					EquipmentAvailability eavl = ear.findById(equipmentID).orElse(null);
+					int a = eavl.getAvailableamount() - 1;
+					if (a == 0) {
+						ear.deleteById(equipmentID);
+						er.deleteById(equipmentID);
+						s = "Equipment Deleted Successfully";
+		
+					}
+		
+					else {
+						eavl.setAvailableamount(a);
+						ear.save(eavl);
+						s = "Equipment Deleted Successfully";
+					}
+		
+				}
+		
+				else
+				{
+					s = "Equipment doesnot exists";
+				}
+			 }
+			 else s = "redirect:/homePage";
+		 }
+		 else s = "redirect:/";
 
 		return s;
 
 	}
 
+	
 	@PostMapping("/viewAllEquipments")
 	@Transactional
 	public String viewAllEquipments() {
 		String s = "";
-		List<equipmentDetails> ls = er.findAll();
-		Iterator<equipmentDetails> itr = ls.iterator();
+		List<EquipmentDetails> ls = er.findAll();
+		Iterator<EquipmentDetails> itr = ls.iterator();
 		while (itr.hasNext()) {
-			equipmentDetails eqd = (equipmentDetails) itr.next();
+			EquipmentDetails eqd = (EquipmentDetails) itr.next();
 			s += eqd.toString() + "\n";
 		}
 
