@@ -1,5 +1,6 @@
 package com.lis.model;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.MapsId;
@@ -10,11 +11,10 @@ import org.springframework.stereotype.Component;
 @Component
 @Entity
 @DynamicUpdate
+@Cacheable
 public class Credentials {
 	
 	@Id
-//	   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="cred_sequence")
-//		@SequenceGenerator(name = "cred_sequence", sequenceName = "cred_sequence")
 	private int id;
 	private String type;
 	private String password;

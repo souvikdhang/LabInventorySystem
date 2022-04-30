@@ -3,6 +3,7 @@ package com.lis.model;
 import java.text.ParseException;
 import java.time.LocalDate;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Entity
 @DynamicUpdate
+@Cacheable
 public class UserProfile {
 	
 	@Id
@@ -74,11 +76,19 @@ public class UserProfile {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+//	@Override
+//	public String toString() {
+//		return "{\"user_id\":" + user_id + ", \"name\":" + name + ", \"dob\":" + dob + ", \"gender\":" + gender
+//				+ ", \"address\":" + address + ", \"phone_number\":" + phoneNumber + ", \"email\":" + email + "}";
+//		
+//	}
+	
 	@Override
 	public String toString() {
 		return "UserProfile [user_id=" + user_id + ", name=" + name + ", dob=" + dob + ", gender=" + gender
-				+ ", address=" + address + ", phone_number=" + phoneNumber + ", email=" + email + "]";
+				+ ", address=" + address + ", phoneNumber=" + phoneNumber + ", email=" + email + "]";
 	}
+	
 		
 
 }

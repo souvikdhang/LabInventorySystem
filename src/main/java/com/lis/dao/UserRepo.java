@@ -10,4 +10,8 @@ public interface UserRepo extends JpaRepository<UserProfile, Integer>{
 	Boolean existsByEmail(String email_id);
 //	Boolean existsByEmailId(String email_id);
 	boolean existsById(int user_id);
+//	  default void refresh(UserProfile user) {
+//		  entityManager.refresh(user);
+//	  }
+
 }

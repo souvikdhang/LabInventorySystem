@@ -7,22 +7,17 @@ select * from equipment_details;
 select * from equipment_availability;
 select * from requests;
 
-
-drop table user_profile;
-drop table credentials;
-drop table equipment_details;
-drop table equipment_availability;
-
-ALTER USER HR IDENTIFIED BY hr;
-
+--drop table credentials;
+--drop table user_profile;
+--drop table equipment_availability;
+--drop table equipment_details;
+--drop table requests;
+--ALTER USER HR IDENTIFIED BY hr;
 
 
-ALTER SEQUENCE HIBERNATE_SEQUENCE INCREMENT BY -2;
-SELECT HIBERNATE_SEQUENCE.NEXTVAL FROM dual;
-ALTER SEQUENCE HIBERNATE_SEQUENCE INCREMENT BY 1;
+insert into credentials (login_status,type,password,profile_obj_user_id) values('1','customer','admin2','27');
+insert into user_profile (user_id,address,dob,email,gender,name,phone_number) values ('27','address',TO_DATE('01/01/2000', 'DD/MM/YYYY'),'email@domain.com','male','admin2','123456789');
 
-ALTER SEQUENCE HIBERNATE_SEQUENCE RESTART WITH 1;
-
-insert into credentials (login_status,type,password,profile_obj_user_id) values('1','customer','admin2','2');
-insert into user_profile (user_id,address,dob,email,gender,name,phone_number) values ('2','address',TO_DATE('01/01/2000', 'DD/MM/YYYY'),'email@domain.com','male','admin2','123456789');
-update credentials set login_status='0' where user_id = '2'; 
+update credentials set type='customer' where profile_obj_user_id = '28'; 
+delete FROM user_profile WHERE user_profile.user_id= 27;
+delete FROM credentials WHERE profile_obj_user_id= 27;

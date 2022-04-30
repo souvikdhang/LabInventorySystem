@@ -1,5 +1,8 @@
 package com.lis.dao;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
 import com.lis.model.Credentials;
 
 import org.springframework.stereotype.Repository;
@@ -15,6 +18,6 @@ public interface Credentials_repo extends JpaRepository<Credentials, Integer> {
 //	Credentials  getByUserType(String userType);
 
 //	boolean existsByUserId(int id);
-	Iterable<Credentials> findAllByType(String type);
+	List<Credentials> findAllByType(String type);
 
 }

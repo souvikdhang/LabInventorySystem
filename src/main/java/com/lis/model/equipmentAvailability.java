@@ -13,6 +13,7 @@ public class EquipmentAvailability {
 	@Id
 	private int Id;
 	private int available_amount = 0;
+	private int issued_amount=0;
 	@OneToOne()
 	@MapsId
 	EquipmentDetails equipment;
@@ -35,11 +36,19 @@ public class EquipmentAvailability {
 	public void setAvailableamount(int availableamount) {
 		this.available_amount = availableamount;
 	}
+	public int getIssued_amount() {
+		return issued_amount;
+	}
+	public void setIssued_amount(int issued_amount) {
+		this.issued_amount = issued_amount;
+	}
 	@Override
 	public String toString() {
-		return "equipmentAvailability [equipmentID=" + Id + ", availableamount=" + available_amount
-				+ ", details=" + equipment + "]";
+		return "EquipmentAvailability [Id=" + Id + ", available_amount=" + available_amount + ", issued_amount="
+				+ issued_amount + ", equipment=" + equipment + "]";
 	}
+
+
 
 	
 	
