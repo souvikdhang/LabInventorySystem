@@ -107,6 +107,28 @@ public class HomeController {
 		 return "redirect:/homePage";
 		 }
 	 }
+	 
+	 @GetMapping("/manageEquipmentPage")
+		 public String manageUserRequests(@CookieValue(name = "userId", required = false) String uidString) {
+			if (uidString == null) {
+				return "redirect:/";
+			} 
+			else 
+			{
+				if (credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("administrator")) 
+				{
+					System.out.println("admin");
+					return "Final_Frontend/manageEquipmentAdmin.html";
+				} 
+				else if (credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("customer"))  
+				{
+					System.out.println("customer");
+					return "Final_Frontend/manageEquipmentUser.html";
+				}
+			}
+			 return "redirect:/";
+
+		}
 
 	// @GetMapping("/manageUserRequests")
 	// public String manageUserRequests(@CookieValue(name = "userId", required =
