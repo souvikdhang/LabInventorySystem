@@ -53,11 +53,12 @@ public class HomeController {
 			if (credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("administrator")) {
 				System.out.println("admin");
 				return "Final_Frontend/adminHome.html";
-			} else {
+			} else if (credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("customer"))  {
 				System.out.println("customer");
 				return "Final_Frontend/userHome.html";
 			}
 		}
+		 return "redirect:/";
 
 	}
 

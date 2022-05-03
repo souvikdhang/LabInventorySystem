@@ -1,5 +1,6 @@
 package com.lis.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,7 +18,8 @@ public class EquipmentDetails {
 	private int equipment_Id;
 	private String org_Name;
 	private String lab_Name;
-	private String rack_Number;
+	@Column(name="rack_number")
+	private String rackNumber;
 	private String server_Name;
 	private String server_IPAddress;
 	private String login_Id;
@@ -53,11 +55,11 @@ public class EquipmentDetails {
 	}
 
 	public String getRackNumber() {
-		return rack_Number;
+		return rackNumber;
 	}
 
 	public void setRackNumber(String rackNumber) {
-		this.rack_Number = rackNumber;
+		this.rackNumber = rackNumber;
 	}
 
 	public String getServerName() {
@@ -119,7 +121,7 @@ public class EquipmentDetails {
 	@Override
 	public String toString() {
 		return "equipmentDetails [equipmentID=" + equipment_Id + ", orgName=" + org_Name + ", labName=" + lab_Name
-				+ ", rackNumber=" + rack_Number + ", serverName=" + server_Name + ", serverIPAddress=" + server_IPAddress
+				+ ", rackNumber=" + rackNumber + ", serverName=" + server_Name + ", serverIPAddress=" + server_IPAddress
 				+ ", loginID=" + login_Id + ", loginPassword=" + login_Password + ", virtualMachine=" + virtual_Machine
 				+ ", serverStatus=" + server_Status + ", serverPower=" + server_Power + "]";
 	}

@@ -8,6 +8,8 @@ import com.lis.model.EquipmentDetails;
 
 @Repository
 public interface EquipmentRepo extends JpaRepository<EquipmentDetails, Integer>{
+
+	boolean existsByRackNumber(String rackNumber);
 	
 
 }

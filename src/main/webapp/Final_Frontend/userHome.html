@@ -83,9 +83,12 @@
         <script>
             $('a').css('cursor', 'pointer');
             console.log(window.location);
-    // window.addEventListener("keydown",(e)=>{
-    // if(e.key=="Enter")callLogout();
-    // })
+            // window.addEventListener("keydown",(e)=>{
+            // if(e.key=="Enter")callLogout();
+            // })
+            function callLogout() {
+                axios({ method: 'get', url: '/logout' }).finally(() => { window.location.href = '/' });
+            }
 
 
 

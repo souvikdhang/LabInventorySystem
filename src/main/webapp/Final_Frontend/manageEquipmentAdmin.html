@@ -79,7 +79,7 @@
             axios
                 ({
                     method: 'post',
-                    url: 'http://localhost:3000/viewAllUser'
+                    url: 'http://localhost:3000/viewAllEquipment'
                 })
                 .then(response => response.data)
                 .then((data) => {
@@ -88,12 +88,34 @@
                     data.forEach(element => {
                         console.log(element)
                         element = element || {};
-                        print += '<tr style="position:relative;"> <th class="userId">' + element.user_id + '</th> <td class="name">' +
-                            element.name + '</td> <td class="dob">' + element.dob +
-                            '</td> <td class="gender">' + element.gender + '</td> <td class="address">' +
-                            element.address + '</td> <td class="phone_number">' + element.phone_number +
-                            '</td> <td class="emailId">' + element.email +
-                            '</td> <td style="width: 20;"><button class="modify btn btn-dark">Modify</button></td> <td style="width: 20;"><button class="delete btn btn-dark">Delete</button></td> </tr> <tr class="drop" style="display: none; ;"> <td class="uid">a</td> <td><input class="form-check-input nameCheck" type="checkbox"> <input disabled class="form-control nameInput" style="padding-top: auto;" type="text" placeholder=""> </td> <td><input class="form-check-input dobCheck" type="checkbox"> <input disabled class="form-control dobInput" style="padding-top: auto;" type="text" placeholder=""> </td> <td><input class="form-check-input genderCheck" type="checkbox"> <input disabled class="form-control genderInput" style="padding-top: auto;" type="text" placeholder=""> </td> <td><input class="form-check-input addressCheck" type="checkbox"> <input disabled class="form-control addressInput" style="padding-top: auto; overflow-wrap: break-word;" type="text" placeholder=""> </td> <td><input class="form-check-input phone_numberCheck" type="checkbox"> <input disabled class="form-control phone_numberInput" style="padding-top: auto;" type="text" placeholder=""> </td> <td><input class="form-check-input emailIdCheck" type="checkbox"> <input disabled class="form-control emailIdInput" style="padding-top: auto;" type="text" placeholder=""> </td> <td><button class="submitModify btn btn-secondary">Confirm</button></td> <td><button class="cancelModify btn btn-secondary">Reset</button></td> </tr>';
+                        print += `<tr>
+                                        <th class="equipmentId">`+ element.equipmentID + `</th>
+                                        <td class="labName">`+ element.labName + `</td>
+                                        <td class="orgName">`+ element.orgName + `</td>
+                                        <td class="rackNumber">`+ element.rackNumber + `</td>
+                                        <td class="virtualMachine">`+ element.virtualMachine + `</td>
+                                        <td class="serverStatus">`+ element.serverStatus + `</td>
+                                        <td class="serverPower">`+ element.serverPower + `</td>
+                                        <td ><button type="button" class="btn btn-default"><span class="glyphicon glyphicon glyphicon-chevron-left"></span></button></td>
+                                    </tr>
+                                 <tr class="drop" style="display: none; ;">
+                                    <td class="uid">a</td>
+                                    <td><input class="form-check-input nameCheck" type="checkbox"> <input disabled class="form-control nameInput"
+                                    style="padding-top: auto;" type="text" placeholder=""> </td>
+                                    <td><input class="form-check-input dobCheck" type="checkbox"> <input disabled class="form-control dobInput"
+                                    style="padding-top: auto;" type="text" placeholder=""> </td>
+                                    <td><input class="form-check-input genderCheck" type="checkbox"> <input disabled
+                                    class="form-control genderInput" style="padding-top: auto;" type="text" placeholder=""> </td>
+                                    <td><input class="form-check-input addressCheck" type="checkbox"> <input disabled
+                                    class="form-control addressInput" style="padding-top: auto; overflow-wrap: break-word;" type="text"
+                                    placeholder=""> </td>
+                                    <td><input class="form-check-input phone_numberCheck" type="checkbox"> <input disabled
+                                    class="form-control phone_numberInput" style="padding-top: auto;" type="text" placeholder=""> </td>
+                                    <td><input class="form-check-input emailIdCheck" type="checkbox"> <input disabled
+                                    class="form-control emailIdInput" style="padding-top: auto;" type="text" placeholder=""> </td>
+                                    <td><button class="submitModify btn btn-secondary">Confirm</button></td>
+                                    <td><button class="cancelModify btn btn-secondary">Reset</button></td>
+                                 </tr>`;
                     })
                     document.querySelector('#tbody').innerHTML = print;
                 })
