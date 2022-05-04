@@ -100,6 +100,25 @@ public class HomeController {
 
 		}
 	}
+	
+	
+	@GetMapping("/newUser")
+	public String newUserPath(@CookieValue(name = "userId", required = false) String uidString) {
+		System.out.println(uidString);
+
+		if (uidString == null) {
+			return "redirect:/";
+		} else {
+			if (credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("administrator")) {
+				return "Final_Frontend/admin/registerUser.html";
+			} else {
+				return "redirect:/homePage";
+			}
+
+		}
+	}
+	
+	
 
 	@GetMapping("/logout")
 	public void logout(@CookieValue(name = "userId", required = false) String uidString, HttpServletResponse response) throws InterruptedException {

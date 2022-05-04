@@ -104,15 +104,15 @@ public class AllController {
 	@Transactional
 	public ResponseEntity<?> addUser(@CookieValue(name = "userId", required = false) String uidCookie, @RequestBody Map<String, String> body) throws ParseException 
 	{
-		String name = body.get("name");
-		String dob= body.get("date");
-		String gender= body.get("gender");
-		String address= body.get("address");
-		String phone= body.get("phoneNumber");
-		String email= body.get("emailId");
-		String userType= body.get("userType");
+		String name = body.get("Username");
+		String dob= body.get("DOB");
+		String gender= body.get("Gender");
+		String address= body.get("Address");
+		String phone= body.get("Phone Number");
+		String email= body.get("Email address");
+		String userType= body.get("UserType");
 //		 if(!uidCookie.equals(null)) return loginError();
-//		 if(credentials.getById(Integer.parseInt(uidCookie)).get_UserType().equals("administrator")) return accessError();
+//		 if(credentials.getById(Integer.parseInt(uidCookie)).get_UserType().equalsIgnoreCase("administrator")) return accessError();
 		if (!users.existsByEmail(email)) {
 			UserProfile user = new UserProfile();
 			Credentials userCred = new Credentials();
@@ -133,6 +133,7 @@ public class AllController {
 			userCred.set_password(password);
 			userCred.set_LoginStatus(false);
 			System.out.println(user);
+			System.out.println("userAdded");
 			credentials.saveAndFlush(userCred);
 			return  new ResponseEntity<Integer>(user.getUser_id(), HttpStatus.OK);
 		} 

@@ -10,6 +10,8 @@
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+              <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+
     <title>Lab Inventory Syatem</title>
 </head>
 <body>
@@ -41,11 +43,34 @@
     <div class="col-sm-6">
         <h3 style="margin-top: 10px">Add User Now</h3>
         <p>Please fill out this to add the new user</p>
-        <form th:action="@{/register}" th:object="${user}" method="post">
+   
             <div class="form-group">
                 <label for="Username">Username</label>
                 <input type="text" name="Username" id="Username" required placeholder="Your username" class="form-control form-control-lg">
             </div>
+            
+            
+            <div class="form-group">
+                <label for="DOB"DOB</label>
+                <input type="calendar" name="DOB" id="DOB" required placeholder="DOB" class="form-control form-control-lg">
+            </div>
+            
+            <div class="form-group">
+            <label for="Gender">Gender</label>
+            <div class="dropdown"  id="dropdownMenuButton_parent1">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    select
+                </button>
+                <div id="Gender" class="dropdown-menu" aria-labelledby="dropdownMenuButton" >
+                    <option value="M" class="dropdown-item" href="#">MALE</option>
+                    <option value="F" class="dropdown-item" href="#">FEMALE</option>
+                </div>
+            </div>
+        </div>
+            
+            
+            
+            
             <div class="form-group">
                 <label for="PhoneNo">Phone Number</label>
                 <input type="text" name="Phone Number" id="Phone Number" required placeholder="Your phone number" class="form-control form-control-lg">
@@ -60,18 +85,101 @@
                        aria-describedby="emailHelp">
                 <small id="emailHelp" class="form-text text-muted">We'll never share your email with
                     anyone else.</small>
-            </div>
+                    
+                    
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" class="form-control form-control-lg" required placeholder="Password" name="password"
-                       id="password">
+            <label for="UserType">UserType</label>
+            <div class="dropdown"  id="dropdownMenuButton_parent1">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    select
+                </button>
+                <div id="UserType" class="dropdown-menu" aria-labelledby="dropdownMenuButton" >
+                    <option value="administrator" class="dropdown-item" href="#">ADMINISTRATOR</option>
+                    <option value="customer" class="dropdown-item" href="#">USER</option>
+                </div>
             </div>
-
-            <input type="submit" value="Add User" class="btn btn-primary btn-block">
+        </div>
             
-        </form>
+            
+            <button onclick="callLogin()" class="btn btn-primary btn-block">Add User</button>
+            
     </div>
 </div>
+
+
+<script>
+
+        var Gender;
+        var UserType;
+        $(document).ready(function() {
+            $('#Gender option').click(function(){
+                Gender = $(this).text();
+                $(this).parents('.dropdown').find('.dropdown-toggle').html(Gender);
+            })
+             
+            $('#UserType option').click(function(){
+                UserType = $(this).text();
+                $(this).parents('.dropdown').find('.dropdown-toggle').html(UserType); 
+            })
+        });
+
+
+
+    function callLogin(){
+
+        var userName = document.getElementById("Username").value;
+        var dob = document.getElementById("DOB").value;
+        var phoneNumber = document.getElementById("Phone Number").value;
+        var address = document.getElementById("Address").value;
+        var emailAddress = document.getElementById("email").value;
+        //var loginID = document.getElementById("loginId").value;
+        //var loginPassword = document.getElementById("loginPassword").value;
+        if(Gender==='MALE')Gender='M';
+        if(Gender==='FEMALE')Gender='F';
+        if(UserType==='ADMINISTRATOR')UserType='administrator';
+        if(UserType==='USER')UserType='customer';
+    
+
+
+        //var url = 'http://localhost:3000/addEquipment?orgName='+orgName+'&labName='+labName+'&rackNumber='+rackNumber+'&serverName='+serverName+'&serverIPAddress='+serverIpAddress+'&loginID='+loginId+'&loginPassword='+loginPassword+'&virtualMachine='+virtualMachine+'&serverStatus='+serverStatus+'&serverPower='+serverPower
+        
+        
+        axios({
+            method: 'post',
+            url: 'http://localhost:3000/addUser',
+            data: {userName, dob, phoneNumber, address, emailAddress, loginID, loginPassword, Gender, UserType}
+
+            }) 
+            .then(response => response.data)
+                .then((data)=>{
+                    console.log(data);
+                    if(data==='loggedIn')
+                    {
+                        location.replace('http://localhost:3000/homePage?userId='+ userId)
+                    }
+                    else if(data===`userNotFound`)
+                    {
+                        document.querySelector('#setInvalid').innerHTML='User not found';
+                        document.querySelector('#setInvalid').style.display='block';
+                    }
+                    else if(data===`wrongPassword`)
+                    {
+                        document.querySelector('#setInvalid').innerHTML='Invalid Password';
+                        document.querySelector('#setInvalid').style.display='block';
+                    }
+                })
+
+                // .catch(
+                //     (e) => {
+                //         document.querySelector('#setInvalid').style.display='block';
+                //     }
+                // )
+                
+    }
+
+</script>
+
+
 
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
