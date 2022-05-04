@@ -46,19 +46,42 @@ public class HomeController {
 
 	@GetMapping("/homePage")
 	public String homePage(@CookieValue(name = "userId", required = false) String uidString) {
+	 	System.out.println(uidString);
+
 
 		if (uidString == null) {
 			return "redirect:/";
-		} else {
-			if (credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("administrator")) {
-				System.out.println("admin");
-				return "Final_Frontend/adminHome.html";
-			} else if (credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("customer"))  {
+		} 
+			if (credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("administrator")) 
+			{
+				System.out.println(credentials.getById(Integer.parseInt(uidString)).get_UserType());
+				return "redirect:/adminHome";
+			} 
+			else if (credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("customer"))  
+			{
 				System.out.println("customer");
-				return "Final_Frontend/userHome.html";
+				return "redirect:/userHome";
 			}
-		}
+
 		 return "redirect:/";
+
+	}
+	
+	@GetMapping("/adminHome")
+	public String adminHome(@CookieValue(name = "userId", required = false) String uidString) {
+	 	System.out.println(uidString);
+	 
+	 	
+	 	if (!credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("administrator"))  return "redirect:/";
+	 	return "Final_Frontend/admin/adminHome.html";
+
+	}
+	
+	@GetMapping("/userHome")
+	public String userHome(@CookieValue(name = "userId", required = false) String uidString) {
+	 	System.out.println(uidString);
+		if (credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("administrator"))  return "redirect:/";
+	 	return "Final_Frontend/user/userHome.html";
 
 	}
 
@@ -70,7 +93,7 @@ public class HomeController {
 			return "redirect:/";
 		} else {
 			if (credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("administrator")) {
-				return "Final_Frontend/registerEquipment.html";
+				return "Final_Frontend/admin/registerEquipment.html";
 			} else {
 				return "redirect:/homePage";
 			}
@@ -102,7 +125,7 @@ public class HomeController {
 		 }
 		 if (credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("administrator"))
 		 {
-		 return "Final_Frontend/manageUsers.html";
+		 return "Final_Frontend/admin/manageUsers.html";
 		 } else {
 		 return "redirect:/homePage";
 		 }
@@ -115,15 +138,16 @@ public class HomeController {
 			} 
 			else 
 			{
-				if (credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("administrator")) 
+				int userId=Integer.parseInt(uidString);
+				if (credentials.getById(userId).get_UserType().equalsIgnoreCase("administrator")) 
 				{
 					System.out.println("admin");
-					return "Final_Frontend/manageEquipmentAdmin.html";
+					return "Final_Frontend/admin/manageEquipmentAdmin.html";
 				} 
-				else if (credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("customer"))  
+				else if (credentials.getById(userId).get_UserType().equalsIgnoreCase("customer"))  
 				{
 					System.out.println("customer");
-					return "Final_Frontend/manageEquipmentUser.html";
+					return "Final_Frontend/user/manageEquipmentUser.html";
 				}
 			}
 			 return "redirect:/";

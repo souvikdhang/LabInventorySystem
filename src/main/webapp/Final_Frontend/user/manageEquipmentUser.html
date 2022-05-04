@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" href="Final_Frontend/lab_icon.png">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+        integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <title>Lab Inventory Syatem</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"
+        integrity="sha256-6XMVI0zB8cRzfZjqKcD01PBsAy3FlDASrlC8SxCpInY=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+
+    <div
+        style="z-index: 10; margin: auto; width: 100vw; height: 100vh;position: absolute; background-color: darkgrey; opacity: 0.7; display: none;">
+        <div
+            style="margin: auto; width: 40%; height: 20%; background-color: aliceblue; opacity: 1;  display: flex; justify-content: center; align-items: center;">
+            hello</div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto"></ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/homePage">Home</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" onclick="callLogout()" onmouseover="" style="cursor: pointer;">Logout</a>
+                    </li>
+
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+    <div style=" width: 90%; margin:auto">
+        <table class="table table-striped table-fixed">
+            <thead>
+                <tr>
+                    <th class="col-sm-1" scope="col">Id</th>
+                    <th class="col-sm-1" scope="col">Lab Name</th>
+                    <th class="col-sm-1" scope="col">Org Name</th>
+                    <th class="col-sm-1" scope="col">Rack Number</th>
+                    <th class="col-sm-1" scope="col">Virtual Machine</th>
+                    <th class="col-sm-1" scope="col">Server Status</th>
+                    <th class="col-sm-1" scope="col">Server Power</th>
+                    <th class="col-sm-1" scope="col">Request</th>
+                </tr>
+
+            </thead>
+            <tbody id="tbody">
+
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // document.querySelector('#tbody').innerHTML=getAllUsers();
+        function getAllEquipments() {
+            axios
+                ({
+                    method: 'post',
+                    url: '/viewAllEquipment'
+                })
+                .then(response => response.data)
+                .then((data) => {
+                    console.log(data);
+                    var print = '';
+                    console.log(data);
+
+                    data.forEach(element => {
+                        console.log(element)
+                        element = element || {};
+                        var button = '';
+                        button = 'Request';
+                        print += `<tr data-equipment="` + element.equipmentID + `">
+                                        <th class="equipmentId">`+ element.equipmentID + `</th>
+                                        <td class="labName">`+ element.labName + `</td>
+                                        <td class="orgName">`+ element.orgName + `</td>
+                                        <td class="rackNumber">`+ element.rackNumber + `</td>
+                                        <td class="virtualMachine">`+ element.virtualMachine + `</td>
+                                        <td class="serverStatus">`+ element.serverStatus + `</td>
+                                        <td class="serverPower">`+ element.serverPower + `</td>
+                                        <td style="width: 20;"><button class="`+ button.toLowerCase() + ` btn btn-dark">` + button + `</button></td>
+                                    </tr>`;
+                    })
+                    document.querySelector('#tbody').innerHTML = print;
+
+
+                })
+            axios
+                ({
+                    method: 'post',
+                    url: '/allRequestByUser'
+                }).then(response2 => response2.data)
+                .then((data2) => {
+                    data2 = data2 || {};
+                    console.warn(data2);
+                    document.querySelectorAll('#tbody tr').forEach(function (e) {
+                        console.dir(e);
+                        if (e.dataset.equipment == data2.equipmentID) {
+                            var button = 'Cancel'
+                            e.lastElementChild.innerHTML = `<button class="` + button.replace(/\s+/g, '').toLowerCase() + ` btn btn-dark">` + button + `</button>`
+                        }
+                    })
+
+
+
+                })
+        }
+
+        getAllEquipments();
+
+
+
+        function callLogout() {
+            axios({ method: 'get', url: '/logout' }).finally(() => {
+                window.location.href = '/'
+            });
+        }
+
+
+
+        $(document).ready(function () {
+
+            $(document).on('click', '.request', function (e) {
+                console.log($(this).parent().siblings(".equipmentId").text());
+                var equipmentId = $(this).parent().siblings(".equipmentId").text();
+                axios({
+                    method: 'post',
+                    url: '/sendRequests',
+                    params: { equipmentId: equipmentId }
+
+                }).then(response => response.data)
+                    .then(data => {
+
+                        $(this).removeClass('request');
+                        $(this).addClass('cancel');
+                        $(this).text('Cancel');
+
+                    })
+
+            });
+
+            $(document).on('click', '.cancel', function (e) {
+                console.log($(this).parent().siblings(".equipmentId").text());
+                axios({ method: 'post', url: '/cancelRequest' }).then(response => response.data).then(data => {
+                    if (data === 'requestDeleted') {
+                        $(this).removeClass('cancel');
+                        $(this).addClass('request');
+                        $(this).text('Request');
+                    }
+                });
+            })
+
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+            // address: "address"
+            // dob: "2001-01-13"
+            // email: "email5@domain.com"
+            // gender: "male"
+            // name: "user3"
+            // phone_number: "1234567890"
+            // user_id: 28
+
+
+            // var serverStatus;
+            // var virtualMachine;
+            // $( document ).ready(function() {
+            //     $('#serverStatus option').click(function(){
+            //         serverStatus = $(this).text();
+            //         $(this).parents('.dropdown').find('.dropdown-toggle').html(serverStatus);
+            //     })
+
+            //     $('#virtualMachine option').click(function(){
+            //         virtualMachine = $(this).text();
+            //         $(this).parents('.dropdown').find('.dropdown-toggle').html(virtualMachine);
+            //     })
+            // });
+
+
+
+            // function callLogin(){
+
+            //     var orgName = document.getElementById("orgName").value;
+            //     var labName = document.getElementById("labName").value;
+            //     var serverName = document.getElementById("serverName").value;
+            //     var rackNumber = document.getElementById("rackNumber").value;
+            //     var serverIpAddress = document.getElementById("serverIpAddress").value;
+            //     var loginId = document.getElementById("loginId").value;
+            //     var loginPassword = document.getElementById("loginPassword").value;
+            //     if(serverStatus==='Operational, Not-In-Use')serverStatus=0;
+            //     if(serverStatus==='Operational, In-Use')serverStatus=1;
+            //     if(serverStatus==='Non-Operational')serverStatus=2;
+            //     if(virtualMachine==='Physical Server')virtualMachine=0;
+            //     if(virtualMachine==='Virtual Machine')virtualMachine=1;
+
+            //     serverStatus=serverStatus-0;
+            //     virtualMachine=virtualMachine-0;
+            //     var serverPower = document.getElementById("serverPower").value-0;
+
+            //     var url = 'http://localhost:3000/addEquipment?orgName='+orgName+'&labName='+labName+'&rackNumber='+rackNumber+'&serverName='+serverName+'&serverIPAddress='+serverIpAddress+'&loginID='+loginId+'&loginPassword='+loginPassword+'&virtualMachine='+virtualMachine+'&serverStatus='+serverStatus+'&serverPower='+serverPower
+
+
+            //     axios({
+            //         method: 'post',
+            //         url: url,
+
+            //         })
+            //         .then(response => response.data)
+            //             .then((data)=>{
+            //                 console.log(data);
+            //                 if(data==='loggedIn')
+            //                 {
+            //                     location.replace('http://localhost:3000/homePage?userId='+ userId)
+            //                 }
+            //                 else if(data===`userNotFound`)
+            //                 {
+            //                     document.querySelector('#setInvalid').innerHTML='User not found';
+            //                     document.querySelector('#setInvalid').style.display='block';
+            //                 }
+            //                 else if(data===`wrongPassword`)
+            //                 {
+            //                     document.querySelector('#setInvalid').innerHTML='Invalid Password';
+            //                     document.querySelector('#setInvalid').style.display='block';
+            //                 }
+            //             })
+
+            //             // .catch(
+            //             //     (e) => {
+            //             //         document.querySelector('#setInvalid').style.display='block';
+            //             //     }
+            //             // )
+
+            // }
+    </script>
+
+
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+        </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
+        </script>
+</body>
+
+</html>

@@ -22,7 +22,6 @@ import com.lis.model.EquipmentDetails;
 import com.lis.model.Requests;
 import com.lis.model.UserProfile;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -388,10 +387,16 @@ public class AllController {
 	@Transactional
 	public ResponseEntity<?> viewAllEquipments(@CookieValue(name = "userId", required = false) String uidCookie) {
 //		if (uidCookie == null)	return loginError();
-		
-		List<EquipmentDetails> ls = equipmentRepo.findAll();														//different return objects for user and admin, include issued for admin
+		int uid = Integer.parseInt(uidCookie);
+		if(credentials.getById(uid).get_UserType().equalsIgnoreCase("administrator")) {
+			List<EquipmentAvailability> ls = equipmentAvailabilityRepo.findAll();											//different return objects for user and admin, include issued for admin
+			return new ResponseEntity<List<EquipmentAvailability>>(ls,HttpStatus.OK);
+		}
+		else {
+			List<EquipmentDetails> ls = equipmentRepo.findAll();														//different return objects for user and admin, include issued for admin
+			return new ResponseEntity<List<EquipmentDetails>>(ls,HttpStatus.OK);
+		}
 
-		return new ResponseEntity<List<EquipmentDetails>>(ls,HttpStatus.OK);
 	}
 
 	@PostMapping("/searchEquipment")
@@ -466,7 +471,7 @@ public class AllController {
 				} 
 				else
 				{
-					return new ResponseEntity<String>("equipmentNotAvailable", HttpStatus.EXPECTATION_FAILED);
+					return new ResponseEntity<String>("equipmentNotAvailable", HttpStatus.NOT_FOUND);
 				}
 
 			}
@@ -478,6 +483,41 @@ public class AllController {
 		else return new ResponseEntity<String>("requestAlreadyExists", HttpStatus.CONFLICT);
 
 
+	}
+	
+	@PostMapping("/cancelRequest")
+	public ResponseEntity<?> cancelRequest(@CookieValue(name = "userId", required = false) String uidCookie){
+		if (uidCookie == null) return loginError();
+		int userId = Integer.parseInt(uidCookie);
+		
+		if (!credentials.getById(userId).get_UserType().equals("customer")) return accessError();
+		
+		if (requestRepo.existsByUserID(userId) == false)
+		{
+			return new ResponseEntity<String>("requestDoesNotExist",HttpStatus.NOT_FOUND);
+		}
+		else 
+		{
+			requestRepo.delete(requestRepo.findByUserID(userId));
+			requestRepo.flush();
+			return new ResponseEntity<String>("requestDeleted",HttpStatus.OK);
+		}
+	}
+	
+	@PostMapping("/allRequestByUser")
+	public ResponseEntity<?> allRequestByUser(@CookieValue(name = "userId", required = false) String uidCookie){
+		if (uidCookie == null) return loginError();
+		int userId = Integer.parseInt(uidCookie);
+		if (!credentials.getById(userId).get_UserType().equals("customer")) return accessError();
+		if (requestRepo.existsByUserID(userId) == false) 
+		{
+			return new ResponseEntity<String>("requestDoesNotExist",HttpStatus.NOT_FOUND);
+		}
+		else 
+		{
+			
+			return new ResponseEntity<Requests>(requestRepo.findByUserID(userId),HttpStatus.OK);
+		}
 	}
 
 	@PostMapping("/seeRequestStatus")

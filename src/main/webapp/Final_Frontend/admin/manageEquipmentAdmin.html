@@ -17,6 +17,8 @@
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"
         integrity="sha256-6XMVI0zB8cRzfZjqKcD01PBsAy3FlDASrlC8SxCpInY=" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+
 </head>
 
 <body>
@@ -52,17 +54,17 @@
         </div>
     </nav>
     <div style=" width: 90%; margin:auto">
-        <table class="table table-striped table-fixed">
+        <table class="table table-striped">
             <thead>
                 <tr>
-                    <th class="col-sm-1" scope="col">Id</th>
+                    <th class="col-sm-1" scope="col">Equipment ID</th>
                     <th class="col-sm-1" scope="col">Lab Name</th>
                     <th class="col-sm-1" scope="col">Org Name</th>
                     <th class="col-sm-1" scope="col">Rack Number</th>
-                    <th class="col-sm-1" scope="col">Virtual Machine</th>
                     <th class="col-sm-1" scope="col">Server Status</th>
-                    <th class="col-sm-1" scope="col">Server Power</th>
-                    <th class="col-sm-1" scope="col">Request</th>
+                    <th class="col-sm-1" scope="col">Available Amount</th>
+                    <th class="col-sm-1" scope="col">Issued Amount</th>
+                    <th class="col-sm-1" scope="col">More</th>
                 </tr>
 
             </thead>
@@ -74,7 +76,7 @@
 
     <script>
         // document.querySelector('#tbody').innerHTML=getAllUsers();
-        function getAllEquipments() {
+        function getAllUser() {
             axios
                 ({
                     method: 'post',
@@ -87,22 +89,39 @@
                     data.forEach(element => {
                         console.log(element)
                         element = element || {};
-                        print += `<tr>
-                                        <th class="equipmentId">`+ element.equipmentID + `</th>
-                                        <td class="labName">`+ element.labName + `</td>
-                                        <td class="orgName">`+ element.orgName + `</td>
-                                        <td class="rackNumber">`+ element.rackNumber + `</td>
-                                        <td class="virtualMachine">`+ element.virtualMachine + `</td>
-                                        <td class="serverStatus">`+ element.serverStatus + `</td>
-                                        <td class="serverPower">`+ element.serverPower + `</td>
-                                        <td style="width: 20;"><button class="request btn btn-dark">Request</button></td>
+                        print += `<tr class="basic-info">
+                                        <th class="0 col-sm-1">`+ element.details.equipmentID + `</th>
+                                        <td class="labName">`+ element.details.labName + `</td>
+                                        <td class="orgName">`+ element.details.orgName + `</td>
+                                        <td class="rackNumber">`+ element.details.rackNumber + `</td>
+                                        <td class="serverStatus">`+ element.details.serverStatus + `</td> 
+                                        <td class="virtualMachine">`+ element.availableamount + `</td>
+                                        <td class="serverPower">`+ element.issued_amount + `</td>
+                                        <td ><button type="button" class="more btn btn-default " ><i class="bi bi-caret-down-fill" style="font-size:16px; "></i></button></td>
+                                    </tr>
+                                    <tr class="more-info " >
+                                        <td class="drop" colspan="4" style="display: none; ">
+                                            <span class="serverName">Server Name : `+ element.details.serverName + `</span><br>
+                                            <span class="serverIPAddress">IP Address : `+ element.details.serverIPAddress + `</span><br>
+                                            <span class="serverPower">Server Power : `+ element.details.serverPower + `</span><br>
+                                            <span class="virtualMachine">Machine Type : `+ element.details.virtualMachine + `</span><br>
+                                            <span class="loginID">Login ID : `+ element.details.loginID + `</span><br>
+                                            <span class="loginPassword">Login Password : `+ element.details.loginPassword + `</span><br>
+                                        </td>
+                                        <td class="drop" colspan="4" style="display: none; ">
+                                            <div style="margin:auto;">
+                                                <button style="display:flex; margin:auto;" class="modify btn btn-dark">Modify</button>
+                                                <div class="info" style="display:flex; margin:auto;" data-equipment="` + element.details.equipmentID + `">&emsp;</div>
+                                                <button style="display:flex; margin:auto;" class="delete btn btn-dark" >Delete</button>
+                                            </div>
+                                        </td>
                                     </tr>`;
                     })
                     document.querySelector('#tbody').innerHTML = print;
                 })
         }
 
-        getAllEquipments();
+        getAllUser();
 
 
 
@@ -112,66 +131,25 @@
 
 
 
+
         $(document).ready(function () {
-
-            $('.cancel').click(function () {
-                var cancelPath = $(this).parent().siblings('td');
-                cancelPath.find('input:text').val('');
-                cancelPath.find('input:text').prop("disabled", "true");
-                cancelPath.find('input:checkbox').prop('checked', false);
-            });
-
-            $('.submitModify').click(function () {
-
-                // console.log($(this).parent().siblings('.uid').text());
-                // console.log($(this).parent().siblings('td').find('.nameInput').val());
-                // console.log($(this).parent().siblings('td').find('.nameInput'));
-                var userId = $(this).parent().siblings('.uid').text();
-                console.log(userId);
-                var obj = {};
-                obj.userId = userId;
-
-                var inputPath = $(this).parent().siblings('td');
-
-                if (inputPath.find('.nameCheck').is(":checked") == true && inputPath.find('.nameInput').val() != "") {
-                    obj.name = inputPath.find('.nameInput').val();
-                }
-
-                if (inputPath.find('.dobCheck').is(":checked") == true && inputPath.find('.dobInput').val() != "") {
-                    obj.dob = inputPath.find('.dobInput').val();
-                }
-
-                if (inputPath.find('.genderCheck').is(":checked") == true && inputPath.find('.genderInput').val() != "") {
-                    obj.gender = inputPath.find('.genderInput').val();
-                }
-
-                if (inputPath.find('.addressCheck').is(":checked") == true && inputPath.find('.addressInput').val() != "") {
-                    obj.address = inputPath.find('.addressInput').val();
-                }
-
-                if (inputPath.find('.phone_numberCheck').is(":checked") == true && inputPath.find('.phone_numberInput').val() != "") {
-                    obj.phoneNumber = inputPath.find('.phone_numberInput').val();
-                }
-
-                if (inputPath.find('.emailIdCheck').is(":checked") == true && inputPath.find('.emailIdInput').val() != "") {
-                    obj.email = inputPath.find('.emailIdInput').val();
-                }
-                console.log(obj);
-                if (Object.keys(obj).length >= 2) {
-                    axios
-                        ({
-                            method: 'post',
-                            url: 'http://localhost:3000/modifyUser',
-                            data: obj
-                        })
-                        .then(response => response.data)
-                        .then((data) => {
-                            console.log(data);
-                            window.location.reload();
-                        });
-                }
-            });
-
+            $(document).on('click', '.more', function (e) {
+                console.dir($(this).parent().parent().next().children().children());
+                $(this).parent().parent().next().children('.drop').slideToggle(1);
+            })
+            $(document).on('click', '.delete', function (e) {
+                var equipmentID = parseInt($(this).siblings('.info').data('equipment'));
+                axios({
+                    method: 'post',
+                    url: '/deleteEquipment',
+                    params: {
+                        equipmentID
+                    }
+                }).then(response => response.data).then(data => {
+                    console.log(data)
+                    window.location.reload();
+                })
+            })
         });
 
 
@@ -273,6 +251,7 @@
         </script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
+
         </script>
 </body>
 

@@ -21,12 +21,12 @@
 
 <body>
 
-    <div
-        style="z-index: 10; margin: auto; width: 100vw; height: 100vh;position: absolute; background-color: darkgrey; opacity: 0.7; display: none;">
+    <!-- <div
+        style="display: flex; z-index: 10; margin: auto; width: 100vw; height: 100vh;position: absolute; background-color: darkgrey; opacity: 0.7; ">
         <div
             style="margin: auto; width: 40%; height: 20%; background-color: aliceblue; opacity: 1;  display: flex; justify-content: center; align-items: center;">
             hello</div>
-    </div>
+    </div> -->
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
@@ -79,7 +79,7 @@
             axios
                 ({
                     method: 'post',
-                    url: 'http://localhost:3000/viewAllEquipment'
+                    url: '/viewAllUser'
                 })
                 .then(response => response.data)
                 .then((data) => {
@@ -88,16 +88,17 @@
                     data.forEach(element => {
                         console.log(element)
                         element = element || {};
-                        print += `<tr>
-                                        <th class="equipmentId">`+ element.equipmentID + `</th>
-                                        <td class="labName">`+ element.labName + `</td>
-                                        <td class="orgName">`+ element.orgName + `</td>
-                                        <td class="rackNumber">`+ element.rackNumber + `</td>
-                                        <td class="virtualMachine">`+ element.virtualMachine + `</td>
-                                        <td class="serverStatus">`+ element.serverStatus + `</td>
-                                        <td class="serverPower">`+ element.serverPower + `</td>
-                                        <td ><button type="button" class="btn btn-default"><span class="glyphicon glyphicon glyphicon-chevron-left"></span></button></td>
-                                    </tr>
+                        print += `<tr style="position:relative;">
+                                    <th class="userId">` + element.user_id + `</th>
+                                    <td class="name">` + element.name + `</td>
+                                    <td class="dob">` + element.dob + `</td>
+                                    <td class="gender">` + element.gender + `</td>
+                                    <td class="address">` + element.address + `</td>
+                                    <td class="phone_number">` + element.phone_number + `</td>
+                                    <td class="emailId">` + element.email + `</td>
+                                    <td style="width: 20;"><button class="modify btn btn-dark">Modify</button></td>
+                                    <td style="width: 20;"><button class="delete btn btn-dark">Delete</button></td>
+                                 </tr>
                                  <tr class="drop" style="display: none; ;">
                                     <td class="uid">a</td>
                                     <td><input class="form-check-input nameCheck" type="checkbox"> <input disabled class="form-control nameInput"
@@ -130,13 +131,12 @@
         }
 
 
-
-
         $(document).ready(function () {
             $('.table').append('');
             console.log('ready');
-            $('.modify').on('click', function () {
+            $(document).on('click', '.modify', function (e) {
                 console.log('modify');
+                console.log(e);
                 var path = $(this).parent().parent().next()
 
                 path.find(".uid").html($(this).parent().parent().find(
@@ -180,10 +180,10 @@
                 axios
                     ({
                         method: 'post',
-                        url: 'http://localhost:3000/deleteUser',
+                        url: '/deleteUser',
                         data: obj
                     })
-                    .then(response => response.data)
+                    .then(response => console.log(response.data))
                     .then((data) => {
                         console.log(data);
                         window.location.reload();
@@ -239,7 +239,7 @@
                     axios
                         ({
                             method: 'post',
-                            url: 'http://localhost:3000/modifyUser',
+                            url: '/modifyUser',
                             data: obj
                         })
                         .then(response => response.data)
