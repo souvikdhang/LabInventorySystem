@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -jar server/webapp-runner.jar --port $PORT target/*.war
+web: java -war target/LabInventorySystemV2.war
