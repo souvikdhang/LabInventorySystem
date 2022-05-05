@@ -47,16 +47,7 @@ public class AllController {
 	RequestRepo requestRepo;
 	@Autowired
 	EquipmentAvailabilityRepo equipmentAvailabilityRepo;
-//	@Autowired
-//	UserProfile currentUser;
-//	@Autowired
-//	Credentials currentUserCredentials;
-//	@Autowired
-//	EquipmentAvailability equipmentAvailability;
-//	@Autowired
-//	EquipmentDetails equipmentDetails;
-//	@Autowired
-//	Requests requests;
+
 
 	static ResponseEntity<String> loginError(){
 		HttpHeaders headers = new HttpHeaders();
@@ -86,7 +77,6 @@ public class AllController {
 			if (currentUserCredentials.get_password().equals(password.trim())) {
 				currentUserCredentials.set_LoginStatus(true);
 				credentials.saveAndFlush(currentUserCredentials);
-//				UserProfile currentUser = users.getById(uid);
 				ResponseCookie userIdCookie = ResponseCookie.from("userId", Integer.toString(uid))
 						
 						.httpOnly(false)
@@ -116,8 +106,8 @@ public class AllController {
 		String phone= body.get("phoneNumber");
 		String email= body.get("emailId");
 		String userType= body.get("userType");
-//		 if(!uidCookie.equals(null)) return loginError();
-//		 if(credentials.getById(Integer.parseInt(uidCookie)).get_UserType().equalsIgnoreCase("administrator")) return accessError();
+		 if(!uidCookie.equals(null)) return loginError();
+		 if(credentials.getById(Integer.parseInt(uidCookie)).get_UserType().equalsIgnoreCase("administrator")) return accessError();
 		if (!users.existsByEmail(email)) {
 			UserProfile user = new UserProfile();
 			Credentials userCred = new Credentials();
@@ -143,7 +133,8 @@ public class AllController {
 			return  new ResponseEntity<Integer>(user.getUser_id(), HttpStatus.OK);
 		} 
 		else 
-			return  new ResponseEntity<String>("userAlreadyExists", HttpStatus.CONFLICT);	}
+			return  new ResponseEntity<String>("userAlreadyExists", HttpStatus.CONFLICT);	
+		}
 
 	@PostMapping("/deleteUser")
 	public ResponseEntity<?> deleteUser(@CookieValue(name = "userId", required = false) String uidCookie,@RequestBody Map<String, String> body) 
@@ -178,7 +169,6 @@ public class AllController {
 			DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 			UserProfile user = users.getById(uid);
-			// Credentials userCred = credentials.getById(uid);
 
 			if (requestBody.containsKey("address"))
 				user.setAddress(requestBody.get("address"));
@@ -219,7 +209,6 @@ public class AllController {
 		if (!credentials.getById(Integer.parseInt(uidCookie)).get_UserType().equalsIgnoreCase("administrator")) {
 			return accessError();
 			}
-//		String s = "";
 		List<Credentials> ls = credentials.findAllByType("customer");
 		List<UserProfile> userList = new ArrayList<UserProfile>();
 		for (Credentials a : ls) {
@@ -413,14 +402,14 @@ public class AllController {
 	@PostMapping("/viewAllEquipment")
 	@Transactional
 	public ResponseEntity<?> viewAllEquipments(@CookieValue(name = "userId", required = false) String uidCookie) {
-//		if (uidCookie == null)	return loginError();
+		if (uidCookie == null)	return loginError();
 		int uid = Integer.parseInt(uidCookie);
 		if(credentials.getById(uid).get_UserType().equalsIgnoreCase("administrator")) {
-			List<EquipmentAvailability> ls = equipmentAvailabilityRepo.findAll();											//different return objects for user and admin, include issued for admin
+			List<EquipmentAvailability> ls = equipmentAvailabilityRepo.findAll();
 			return new ResponseEntity<List<EquipmentAvailability>>(ls,HttpStatus.OK);
 		}
 		else {
-			List<EquipmentDetails> ls = equipmentRepo.findAll();														//different return objects for user and admin, include issued for admin
+			List<EquipmentDetails> ls = equipmentRepo.findAll();
 			return new ResponseEntity<List<EquipmentDetails>>(ls,HttpStatus.OK);
 		}
 
@@ -432,7 +421,7 @@ public class AllController {
 			@RequestParam("labName") String labName, @RequestParam("orgName") String orgName,
 			@RequestParam("equipmentID") int equipmentID) 
 	{
-//		if (uidCookie == null)	return loginError();
+		if (uidCookie == null)	return loginError();
 
 		if (equipmentRepo.existsById(equipmentID)) {
 			EquipmentAvailability equipmentAvailability = equipmentAvailabilityRepo.findById(equipmentID).orElse(null);
@@ -481,8 +470,8 @@ public class AllController {
 	@Transactional
 	public ResponseEntity<?> sendRequest(@CookieValue(name = "userId", required = false) String uidCookie, @RequestParam("equipmentId") int equipmentID) 
 	{
-//		if (uidCookie == null) return loginError();
-//		if (!credentials.getById(Integer.parseInt(uidCookie)).get_UserType().equals("customer")) return AccessError();
+		if (uidCookie == null) return loginError();
+		if (!credentials.getById(Integer.parseInt(uidCookie)).get_UserType().equals("customer")) return accessError();
 		int userId = Integer.parseInt(uidCookie);
 		if (requestRepo.existsByUserID(userId) == false) {
 			if (users.existsById(userId)) {
@@ -601,7 +590,6 @@ public class AllController {
 		List<Requests> rq2 = requestRepo.findAllByRequestStatus("sent");
 		List<Requests> newList = new ArrayList<Requests>(rq1);
 		newList.addAll(rq2);
-
 		return ResponseEntity.ok().body(newList);
 
 	}
@@ -611,8 +599,8 @@ public class AllController {
 			@RequestParam  int requestID,
 			@RequestParam String requestResponse) 
 	{
-//		if (uidCookie == null)return loginPage;
-//		if (!credentials.getById(Integer.parseInt(uidCookie)).get_UserType().equals("administrator"))return homePage;
+		if (uidCookie == null)return loginError();
+		if (!credentials.getById(Integer.parseInt(uidCookie)).get_UserType().equals("administrator"))return accessError();
 		
 		System.out.println(requestID);
 		System.out.println(requestResponse);
@@ -647,11 +635,9 @@ public class AllController {
 				return new ResponseEntity<String>("requestPending",HttpStatus.OK);
 			}
 			else if (requestResponse.equalsIgnoreCase("rejected")) {
-//				requests.setRequestStatus("rejected");
 				requestRepo.delete(requests);
 				requestRepo.flush();
 				return new ResponseEntity<String>("requestRejected",HttpStatus.OK);
-
 			}
 			
 		}return new ResponseEntity<String>("noRequestFound",HttpStatus.NOT_FOUND);

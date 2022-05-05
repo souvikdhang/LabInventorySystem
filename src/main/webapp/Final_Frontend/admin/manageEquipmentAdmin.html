@@ -18,6 +18,7 @@
         integrity="sha256-6XMVI0zB8cRzfZjqKcD01PBsAy3FlDASrlC8SxCpInY=" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
     <style>
         .rotate {
             transform: rotate(180deg);
@@ -85,6 +86,7 @@
     <script>
         //admin
         // document.querySelector('#tbody').innerHTML=getAllUsers();
+        var allEquipment = [];
         function getAllUser() {
             axios
                 ({
@@ -110,12 +112,12 @@
                                     </tr>
                                     <tr class="more-info " >
                                         <td class="drop" colspan="4" style="display: none; ">
-                                            <span class="serverName">Server Name : `+ element.details.serverName + `</span><br>
-                                            <span class="serverIPAddress">IP Address : `+ element.details.serverIPAddress + `</span><br>
-                                            <span class="serverPower">Server Power : `+ element.details.serverPower + `</span><br>
-                                            <span class="virtualMachine">Machine Type : `+ element.details.virtualMachine + `</span><br>
-                                            <span class="loginID">Login ID : `+ element.details.loginID + `</span><br>
-                                            <span class="loginPassword">Login Password : `+ element.details.loginPassword + `</span><br>
+                                            <span class="serverName"><b>Server Name : </b>`+ element.details.serverName + `</span><br>
+                                            <span class="serverIPAddress"><b>IP Address : </b>`+ element.details.serverIPAddress + `</span><br>
+                                            <span class="serverPower"><b>Server Power : </b>`+ element.details.serverPower + `</span><br>
+                                            <span class="virtualMachine"><b>Machine Type : </b>`+ element.details.virtualMachine + `</span><br>
+                                            <span class="loginID"><b>Login ID : </b>`+ element.details.loginID + `</span><br>
+                                            <span class="loginPassword"><b>Login Password : </b>`+ element.details.loginPassword + `</span><br>
                                         </td>
                                         <td class="drop" colspan="4" style="display: none; ">
                                             <div style="margin:auto;">
@@ -127,6 +129,8 @@
                                     </tr>`;
                     })
                     document.querySelector('#tbody').innerHTML = print;
+                    allEquipment = data;
+                    // console.log(equipment);
                 })
         }
 
@@ -143,7 +147,7 @@
 
         $(document).ready(function () {
             $(document).on('click', '.more', function (e) {
-                console.dir($(this).parent().parent().next().children().children());
+                // console.dir($(this).parent().parent().next().children().children());
                 $(this).parent().parent().next().children('.drop').slideToggle(1);
                 $(this).toggleClass('rotate');
             })
@@ -160,6 +164,22 @@
                     console.log(data)
                     window.location.reload();
                 })
+            })
+
+            $(document).on('click', '.modify', function (e) {
+                equipmentId = parseInt($(this).siblings('.info').data('equipment'));
+                var equipment = {};
+                allEquipment.forEach(element => {
+                    if (element.equipmentID == equipmentId) {
+
+                        equipment = element.details;
+                    }
+                })
+                console.log(JSON.stringify(equipment));
+                Cookies.set('equipment', JSON.stringify(equipment));
+                var cookie = Cookies.get('equipment')
+                // console.log(JSON.parse(cookie));
+                window.location.replace('/modifyEquipmentPage');
             })
         });
 
