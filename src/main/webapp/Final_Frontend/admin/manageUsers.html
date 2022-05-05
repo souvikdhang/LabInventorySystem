@@ -11,7 +11,7 @@
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
         integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
-    <title>Lab Inventory Syatem</title>
+    <title>Lab Inventory System</title>
     <script src="https://code.jquery.com/jquery-3.6.0.js"
         integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"
@@ -161,10 +161,12 @@
                 //     direction: 'up'
                 // });
             });
-
-            $(".form-check-input").click(function () {
-
+			$(document).on('click', '.form-check-input', function (e) {
+            //$(".form-check-input").click(function () {
+				
+				console.log($(this).is(":checked"));
                 if ($(this).is(":checked") == false) {
+					
                     $(this).parent().find(".form-control").prop("disabled", "true");
                 }
                 if ($(this).is(":checked") == true) {
@@ -174,7 +176,8 @@
             });
 
 
-            $('.delete').click(function () {
+			$(document).on('click', '.delete', function (e) {
+            //$('.delete').click(function () {
                 console.log(console.log($(this).parent().parent().find(".userId").text()));
                 var obj = { userId: $(this).parent().parent().find(".userId").text() }
                 axios
@@ -192,14 +195,17 @@
 
             })
 
-            $('.cancelModify').click(function () {
+			$(document).on('click', '.cancelModify', function (e) {
+            //$('.cancelModify').click(function () {
                 var cancelPath = $(this).parent().siblings('td');
                 cancelPath.find('input:text').val('');
                 cancelPath.find('input:text').prop("disabled", "true");
                 cancelPath.find('input:checkbox').prop('checked', false);
             });
 
-            $('.submitModify').click(function () {
+
+			$(document).on('click', '.submitModify', function (e) {
+            //$('.submitModify').click(function () {
 
                 // console.log($(this).parent().siblings('.uid').text());
                 // console.log($(this).parent().siblings('td').find('.nameInput').val());

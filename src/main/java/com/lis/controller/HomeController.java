@@ -151,27 +151,43 @@ public class HomeController {
 	 }
 	 
 	 @GetMapping("/manageEquipmentPage")
-		 public String manageUserRequests(@CookieValue(name = "userId", required = false) String uidString) {
-			if (uidString == null) {
-				return "redirect:/";
-			} 
-			else 
+	 public String manageEquipmentPage(@CookieValue(name = "userId", required = false) String uidString) {
+		if (uidString == null) {
+			return "redirect:/";
+		} 
+		else 
+		{
+			int userId=Integer.parseInt(uidString);
+			if (credentials.getById(userId).get_UserType().equalsIgnoreCase("administrator")) 
 			{
-				int userId=Integer.parseInt(uidString);
-				if (credentials.getById(userId).get_UserType().equalsIgnoreCase("administrator")) 
-				{
-					System.out.println("admin");
-					return "Final_Frontend/admin/manageEquipmentAdmin.html";
-				} 
-				else if (credentials.getById(userId).get_UserType().equalsIgnoreCase("customer"))  
-				{
-					System.out.println("customer");
-					return "Final_Frontend/user/manageEquipmentUser.html";
-				}
+				System.out.println("admin");
+				return "redirect:/manageEquipmentAdminPage";
+			} 
+			else if (credentials.getById(userId).get_UserType().equalsIgnoreCase("customer"))  
+			{
+				System.out.println("customer");
+				return "redirect:/manageEquipmentUserPage";
 			}
-			 return "redirect:/";
-
 		}
+		 return "redirect:/";
+
+	}
+ 
+ @GetMapping("/manageEquipmentAdminPage")
+	public String manageEquipmentAdminPage(@CookieValue(name = "userId", required = false) String uidString) {
+	 	System.out.println(uidString);
+		if (!credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("administrator"))  return "redirect:/";
+	 	return "Final_Frontend/admin/manageEquipmentAdmin.html";
+
+	}
+ 
+ @GetMapping("/manageEquipmentUserPage")
+	public String manageEquipmentUserPage(@CookieValue(name = "userId", required = false) String uidString) {
+	 	System.out.println(uidString);
+		if (credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("administrator"))  return "redirect:/";
+	 	return "Final_Frontend/user/manageEquipmentUser.html";
+
+	}
 
 	// @GetMapping("/manageUserRequests")
 	// public String manageUserRequests(@CookieValue(name = "userId", required =

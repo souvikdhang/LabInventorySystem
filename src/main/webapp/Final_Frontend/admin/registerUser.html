@@ -11,8 +11,14 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
               <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+              
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"
+        integrity="sha256-6XMVI0zB8cRzfZjqKcD01PBsAy3FlDASrlC8SxCpInY=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-    <title>Lab Inventory Syatem</title>
+    <title>Lab Inventory System</title>
 </head>
 <body>
 
@@ -61,7 +67,7 @@
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     select
                 </button>
-                <div id="Gender" class="dropdown-menu" aria-labelledby="dropdownMenuButton" >
+                <div id="gender" class="dropdown-menu" aria-labelledby="dropdownMenuButton" >
                     <option value="M" class="dropdown-item" href="#">MALE</option>
                     <option value="F" class="dropdown-item" href="#">FEMALE</option>
                 </div>
@@ -93,87 +99,81 @@
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     select
                 </button>
-                <div id="UserType" class="dropdown-menu" aria-labelledby="dropdownMenuButton" >
+                <div id="usertype" class="dropdown-menu" aria-labelledby="dropdownMenuButton" >
                     <option value="administrator" class="dropdown-item" href="#">ADMINISTRATOR</option>
                     <option value="customer" class="dropdown-item" href="#">USER</option>
                 </div>
             </div>
         </div>
             
+            <div id = 'success' style="display:none;" class="alert alert-primary" >User Added with userId:&nbsp</div>
+            <div id = 'setinvalid' style="display:none;" class="alert alert-error text-danger" >Could not add User</div>
+			
             
             <button onclick="callLogin()" class="btn btn-primary btn-block">Add User</button>
             
+				            
     </div>
 </div>
 
 
 <script>
 
-        var Gender;
-        var UserType;
+        var gender;
+        var userType;
         $(document).ready(function() {
-            $('#Gender option').click(function(){
-                Gender = $(this).text();
-                $(this).parents('.dropdown').find('.dropdown-toggle').html(Gender);
+            $(document).on('click','#gender option', function(){
+                gender = $(this).text();
+                console.log(gender);
+                $(this).parents('.dropdown').find('.dropdown-toggle').html(gender);
             })
              
-            $('#UserType option').click(function(){
-                UserType = $(this).text();
-                $(this).parents('.dropdown').find('.dropdown-toggle').html(UserType); 
+            $(document).on('click','#usertype option', function(){
+                userType = $(this).text();
+                $(this).parents('.dropdown').find('.dropdown-toggle').html(userType); 
             })
         });
+        
+        
 
 
 
     function callLogin(){
 
-        var userName = document.getElementById("Username").value;
-        var dob = document.getElementById("DOB").value;
+        var name = document.getElementById("Username").value;
+        var date = document.getElementById("DOB").value;
         var phoneNumber = document.getElementById("Phone Number").value;
         var address = document.getElementById("Address").value;
-        var emailAddress = document.getElementById("email").value;
+        var emailId = document.getElementById("email").value;
         //var loginID = document.getElementById("loginId").value;
         //var loginPassword = document.getElementById("loginPassword").value;
-        if(Gender==='MALE')Gender='M';
-        if(Gender==='FEMALE')Gender='F';
-        if(UserType==='ADMINISTRATOR')UserType='administrator';
-        if(UserType==='USER')UserType='customer';
+        if(gender==='MALE')gender='M';
+        if(gender==='FEMALE')gender='F';
+        if(userType==='ADMINISTRATOR')userType='administrator';
+        if(userType==='USER')userType='customer';
     
 
 
         //var url = 'http://localhost:3000/addEquipment?orgName='+orgName+'&labName='+labName+'&rackNumber='+rackNumber+'&serverName='+serverName+'&serverIPAddress='+serverIpAddress+'&loginID='+loginId+'&loginPassword='+loginPassword+'&virtualMachine='+virtualMachine+'&serverStatus='+serverStatus+'&serverPower='+serverPower
         
-        
         axios({
             method: 'post',
             url: 'http://localhost:3000/addUser',
-            data: {userName, dob, phoneNumber, address, emailAddress, loginID, loginPassword, Gender, UserType}
+            data: {name, date, phoneNumber, address, emailId, gender, userType}
 
             }) 
             .then(response => response.data)
                 .then((data)=>{
                     console.log(data);
-                    if(data==='loggedIn')
-                    {
-                        location.replace('http://localhost:3000/homePage?userId='+ userId)
-                    }
-                    else if(data===`userNotFound`)
-                    {
-                        document.querySelector('#setInvalid').innerHTML='User not found';
-                        document.querySelector('#setInvalid').style.display='block';
-                    }
-                    else if(data===`wrongPassword`)
-                    {
-                        document.querySelector('#setInvalid').innerHTML='Invalid Password';
-                        document.querySelector('#setInvalid').style.display='block';
-                    }
+                    document.querySelector('#success').style.display = 'block'
+                	document.querySelector('#success').append(data)
                 })
 
-                // .catch(
-                //     (e) => {
-                //         document.querySelector('#setInvalid').style.display='block';
-                //     }
-                // )
+                 .catch(
+                     (e) => {
+                         document.querySelector('#setInvalid').style.display='block';
+                     }
+                 )
                 
     }
 
