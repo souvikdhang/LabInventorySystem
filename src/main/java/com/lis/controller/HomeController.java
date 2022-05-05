@@ -209,6 +209,19 @@ public class HomeController {
 			 return "redirect:/homePage";
 			 }
 	 }
+	 
+	 @GetMapping("/modifyEquipmentPage")
+	 public String modifyEquipmentPage(@CookieValue(name = "userId", required =	 false) String uidString) {
+		 if (uidString == null) {
+			 return "redirect:/";
+			 }
+			 if (credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("administrator"))
+			 {
+			 return "Final_Frontend/admin/modifyEquipment.html";
+			 } else {
+			 return "redirect:/homePage";
+			 }
+	 }
 
 	// @GetMapping("/manageLabEquipments")
 	// public String manageLabEquipments(@CookieValue(name = "userId", required =
