@@ -162,13 +162,9 @@
                 if (userType === 'ADMINISTRATOR') userType = 'administrator';
                 if (userType === 'USER') userType = 'customer';
 
-
-
-                //var url = 'http://localhost:3000/addEquipment?orgName='+orgName+'&labName='+labName+'&rackNumber='+rackNumber+'&serverName='+serverName+'&serverIPAddress='+serverIpAddress+'&loginID='+loginId+'&loginPassword='+loginPassword+'&virtualMachine='+virtualMachine+'&serverStatus='+serverStatus+'&serverPower='+serverPower
-
                 axios({
                     method: 'post',
-                    url: 'http://localhost:3000/addUser',
+                    url: '/addUser',
                     data: { name, date, phoneNumber, address, emailId, gender, userType }
 
                 })
