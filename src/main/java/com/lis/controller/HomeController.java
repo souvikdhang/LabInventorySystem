@@ -83,7 +83,7 @@ public class HomeController {
 	}
 
 	@GetMapping("/newEquipment")
-	public String newEquipmentPath(@CookieValue(name = "userId", required = false) String uidString) {
+	public String newEquipmentPage(@CookieValue(name = "userId", required = false) String uidString) {
 		System.out.println(uidString);
 
 		if (uidString == null) {
@@ -99,7 +99,7 @@ public class HomeController {
 	}
 
 	@GetMapping("/newUser")
-	public String newUserPath(@CookieValue(name = "userId", required = false) String uidString) {
+	public String newUserPage(@CookieValue(name = "userId", required = false) String uidString) {
 		System.out.println(uidString);
 
 		if (uidString == null) {
@@ -132,7 +132,7 @@ public class HomeController {
 	}
 
 	@GetMapping("/manageUsers")
-	public String manageUsers(@CookieValue(name = "userId", required = false) String uidString) {
+	public String manageUsersPage(@CookieValue(name = "userId", required = false) String uidString) {
 		if (uidString == null) {
 			return "redirect:/";
 		}
@@ -179,7 +179,7 @@ public class HomeController {
 	}
 
 	@GetMapping("/manageUserRequestsPage")
-	public String manageUserRequests(@CookieValue(name = "userId", required = false) String uidString) {
+	public String manageUserRequestsPage(@CookieValue(name = "userId", required = false) String uidString) {
 		if (uidString == null) {
 			return "redirect:/";
 		}
