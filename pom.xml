@@ -8,9 +8,9 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.lis</groupId>
-	<artifactId>LabInventorySystemV2</artifactId>
+	<artifactId>LabInventorySystemV5</artifactId>
 	<version>1</version>
-	<name>LabInventorySystemV2</name>
+	<name>LabInventorySystemV5</name>
 	<description>Lab Inventory System</description>
 	<properties>
 		<java.version>11</java.version>

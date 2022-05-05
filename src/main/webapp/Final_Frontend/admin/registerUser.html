@@ -10,7 +10,15 @@
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
-    <title>Lab Inventory Syatem</title>
+              <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+              
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"
+        integrity="sha256-6XMVI0zB8cRzfZjqKcD01PBsAy3FlDASrlC8SxCpInY=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <title>Lab Inventory System</title>
 </head>
 <body>
 
@@ -41,11 +49,34 @@
     <div class="col-sm-6">
         <h3 style="margin-top: 10px">Add User Now</h3>
         <p>Please fill out this to add the new user</p>
-        <form th:action="@{/register}" th:object="${user}" method="post">
+   
             <div class="form-group">
                 <label for="Username">Username</label>
                 <input type="text" name="Username" id="Username" required placeholder="Your username" class="form-control form-control-lg">
             </div>
+            
+            
+            <div class="form-group">
+                <label for="DOB"DOB</label>
+                <input type="calendar" name="DOB" id="DOB" required placeholder="DOB" class="form-control form-control-lg">
+            </div>
+            
+            <div class="form-group">
+            <label for="Gender">Gender</label>
+            <div class="dropdown"  id="dropdownMenuButton_parent1">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    select
+                </button>
+                <div id="gender" class="dropdown-menu" aria-labelledby="dropdownMenuButton" >
+                    <option value="M" class="dropdown-item" href="#">MALE</option>
+                    <option value="F" class="dropdown-item" href="#">FEMALE</option>
+                </div>
+            </div>
+        </div>
+            
+            
+            
+            
             <div class="form-group">
                 <label for="PhoneNo">Phone Number</label>
                 <input type="text" name="Phone Number" id="Phone Number" required placeholder="Your phone number" class="form-control form-control-lg">
@@ -60,18 +91,95 @@
                        aria-describedby="emailHelp">
                 <small id="emailHelp" class="form-text text-muted">We'll never share your email with
                     anyone else.</small>
-            </div>
+                    
+                    
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" class="form-control form-control-lg" required placeholder="Password" name="password"
-                       id="password">
+            <label for="UserType">UserType</label>
+            <div class="dropdown"  id="dropdownMenuButton_parent1">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    select
+                </button>
+                <div id="usertype" class="dropdown-menu" aria-labelledby="dropdownMenuButton" >
+                    <option value="administrator" class="dropdown-item" href="#">ADMINISTRATOR</option>
+                    <option value="customer" class="dropdown-item" href="#">USER</option>
+                </div>
             </div>
-
-            <input type="submit" value="Add User" class="btn btn-primary btn-block">
+        </div>
             
-        </form>
+            <div id = 'success' style="display:none;" class="alert alert-primary" >User Added with userId:&nbsp</div>
+            <div id = 'setinvalid' style="display:none;" class="alert alert-error text-danger" >Could not add User</div>
+			
+            
+            <button onclick="callLogin()" class="btn btn-primary btn-block">Add User</button>
+            
+				            
     </div>
 </div>
+
+
+<script>
+
+        var gender;
+        var userType;
+        $(document).ready(function() {
+            $(document).on('click','#gender option', function(){
+                gender = $(this).text();
+                console.log(gender);
+                $(this).parents('.dropdown').find('.dropdown-toggle').html(gender);
+            })
+             
+            $(document).on('click','#usertype option', function(){
+                userType = $(this).text();
+                $(this).parents('.dropdown').find('.dropdown-toggle').html(userType); 
+            })
+        });
+        
+        
+
+
+
+    function callLogin(){
+
+        var name = document.getElementById("Username").value;
+        var date = document.getElementById("DOB").value;
+        var phoneNumber = document.getElementById("Phone Number").value;
+        var address = document.getElementById("Address").value;
+        var emailId = document.getElementById("email").value;
+        //var loginID = document.getElementById("loginId").value;
+        //var loginPassword = document.getElementById("loginPassword").value;
+        if(gender==='MALE')gender='M';
+        if(gender==='FEMALE')gender='F';
+        if(userType==='ADMINISTRATOR')userType='administrator';
+        if(userType==='USER')userType='customer';
+    
+
+
+        //var url = 'http://localhost:3000/addEquipment?orgName='+orgName+'&labName='+labName+'&rackNumber='+rackNumber+'&serverName='+serverName+'&serverIPAddress='+serverIpAddress+'&loginID='+loginId+'&loginPassword='+loginPassword+'&virtualMachine='+virtualMachine+'&serverStatus='+serverStatus+'&serverPower='+serverPower
+        
+        axios({
+            method: 'post',
+            url: 'http://localhost:3000/addUser',
+            data: {name, date, phoneNumber, address, emailId, gender, userType}
+
+            }) 
+            .then(response => response.data)
+                .then((data)=>{
+                    console.log(data);
+                    document.querySelector('#success').style.display = 'block'
+                	document.querySelector('#success').append(data)
+                })
+
+                 .catch(
+                     (e) => {
+                         document.querySelector('#setInvalid').style.display='block';
+                     }
+                 )
+                
+    }
+
+</script>
+
+
 
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>

@@ -11,7 +11,7 @@
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
         integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
-    <title>Lab Inventory Syatem</title>
+    <title>Lab Inventory System</title>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
@@ -66,7 +66,7 @@
                 <div class="form-group">
                     <label for="Rack Number">Rack Number</label>
                     <input type="text" class="form-control form-control-lg" required minlength="2"
-                        placeholder="Rack Number" name="email" id="rackNumber" aria-describedby="emailHelp">
+                        placeholder="rack number" name="Rack Number" id="rackNumber" aria-describedby="emailHelp">
                 </div>
 
                 <div class="form-group">
@@ -143,6 +143,7 @@
         $(document).ready(function () {
             $('#serverStatus option').click(function () {
                 serverStatus = $(this).text();
+                console.log(serverStatus);
                 $(this).parents('.dropdown').find('.dropdown-toggle').html(serverStatus);
             })
 
