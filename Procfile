@@ -1,1 +1,1 @@
-web: java -war target/LabInventorySystemV2.war
+web: java -jar target/LabInventorySystemV2.war
