@@ -21,4 +21,4 @@ insert into user_profile (user_id,address,dob,email,gender,name,phone_number) va
 update credentials set type='customer' where profile_obj_user_id = '28'; 
 delete FROM user_profile WHERE user_profile.user_id= 27;
 delete FROM credentials WHERE profile_obj_user_id= 27;
-delete FROM requests WHERE userid= 32;
+delete FROM requests WHERE userid= 28;

@@ -21,6 +21,7 @@ import com.lis.model.EquipmentAvailability;
 import com.lis.model.EquipmentDetails;
 import com.lis.model.Requests;
 import com.lis.model.UserProfile;
+import com.lis.others.EquipmentAndRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -264,6 +265,22 @@ public class AllController {
 		else return new ResponseEntity<String>("equipmentAlreadyExists",HttpStatus.CONFLICT);
 
 	}
+	
+	@PostMapping("/addExistingEquipment")
+	@Transactional
+	public ResponseEntity<?>addExistingEquipment(@CookieValue(name = "userId", required = false) String uidCookie,@RequestParam("equipmentID") int equipmentID){
+		if(uidCookie==null) return loginError();
+		if(!credentials.getById(Integer.parseInt(uidCookie)).get_UserType().equals("administrator")) return accessError();
+		if(equipmentAvailabilityRepo.existsById(equipmentID)) {
+			EquipmentAvailability equipmentAvailability = equipmentAvailabilityRepo.getById(equipmentID);
+			equipmentAvailability.setAvailableamount(equipmentAvailability.getAvailableamount()+1);
+			equipmentAvailabilityRepo.saveAndFlush(equipmentAvailability);
+			return new ResponseEntity<Integer>(equipmentAvailability.getAvailableamount(),HttpStatus.OK);
+		}
+		else {
+			return new ResponseEntity<String>("equipmentDoesNotExists",HttpStatus.NOT_FOUND);
+		}
+	}
 
 	@PostMapping("/deleteEquipment")
 	@Transactional
@@ -276,10 +293,13 @@ public class AllController {
 		{
 			EquipmentAvailability equipmentAvailability = equipmentAvailabilityRepo.findById(equipmentID).orElse(null);
 			int available = equipmentAvailability.getAvailableamount() - 1;
-			if (available == 0) 
+			if (available <= 0) 
 			{
 				if (equipmentAvailability.getIssued_amount()>0) 
 				{
+					if(available<=0)available=0;
+					equipmentAvailability.setAvailableamount(available);
+					equipmentAvailabilityRepo.save(equipmentAvailability);
 					return new ResponseEntity<String>("issued_cannotDelete",HttpStatus.EXPECTATION_FAILED);
 				}
 				else
@@ -291,6 +311,7 @@ public class AllController {
 			} 
 			else
 			{
+				if(available<=0)available=0;
 				equipmentAvailability.setAvailableamount(available);
 				equipmentAvailabilityRepo.save(equipmentAvailability);
 				return new ResponseEntity<String>("equipmentReduced",HttpStatus.OK);			
@@ -417,8 +438,8 @@ public class AllController {
 	@PostMapping("/returnEquipment")
 	@Transactional
 	public ResponseEntity<?> returnEquipment(@CookieValue(name = "userId", required = false) String uidCookie, @RequestParam("requestID") int requestID) {
-//		if (uidCookie == null) return loginError();
-//		if (!credentials.getById(Integer.parseInt(uidCookie)).get_UserType().equals("customer")) return accessError();
+		if (uidCookie == null) return loginError();
+		if (!credentials.getById(Integer.parseInt(uidCookie)).get_UserType().equals("customer")) return accessError();
 		if (requestRepo.existsById(requestID)) {
 			Requests requests = requestRepo.findById(requestID).orElse(null);
 			if ((requests.getRequestStatus()).equals("accepted")) {
@@ -430,7 +451,8 @@ public class AllController {
 					eav.setIssued_amount(eav.getIssued_amount()-1);
 					requests.setRequestStatus("returned");
 					equipmentAvailabilityRepo.saveAndFlush(eav);
-					requestRepo.saveAndFlush(requests);
+					requestRepo.delete(requests);
+					requestRepo.flush();
 					return new ResponseEntity<String>("returned", HttpStatus.OK);
 				}
 				else 
@@ -498,9 +520,17 @@ public class AllController {
 		}
 		else 
 		{
-			requestRepo.delete(requestRepo.findByUserID(userId));
-			requestRepo.flush();
-			return new ResponseEntity<String>("requestDeleted",HttpStatus.OK);
+			Requests request = requestRepo.findByUserID(userId);
+			if(!request.getRequestStatus().equals("accepted")) {
+				requestRepo.delete(requestRepo.findByUserID(userId));
+				requestRepo.flush();
+				return new ResponseEntity<String>("requestDeleted",HttpStatus.OK);
+			}
+			else {
+				return new ResponseEntity<String>("cannotDelete",HttpStatus.CONFLICT);
+			}
+			
+
 		}
 	}
 	
@@ -515,8 +545,15 @@ public class AllController {
 		}
 		else 
 		{
-			
-			return new ResponseEntity<Requests>(requestRepo.findByUserID(userId),HttpStatus.OK);
+			EquipmentAndRequest equipmentAndRequest = new EquipmentAndRequest();
+			Requests request = requestRepo.findByUserID(userId);
+			equipmentAndRequest.setRequest(request);
+			System.out.println(equipmentAndRequest);
+			if(requestRepo.findByUserID(userId).getRequestStatus().equalsIgnoreCase("accepted")) {
+				equipmentAndRequest.setEquipmentDetails(equipmentRepo.findById(request.getEquipmentID()).get());
+				System.out.println(equipmentAndRequest);
+			}
+			return new ResponseEntity<EquipmentAndRequest>(equipmentAndRequest,HttpStatus.OK);
 		}
 	}
 
@@ -551,21 +588,22 @@ public class AllController {
 
 	@PostMapping("/viewRequests")
 	public ResponseEntity<?> viewUserRequests(@CookieValue(name = "userId", required = false) String uidCookie) {
-//		if (uidCookie == null)
-//			return loginPage;
-//		if (!credentials.getById(Integer.parseInt(uidCookie)).get_UserType().equals("administrator"))
-//			return homePage;
-//		String s = "";
+		if (uidCookie == null)return loginError();
+		if (!credentials.getById(Integer.parseInt(uidCookie)).get_UserType().equals("administrator"))	return accessError();
 		
-		List<Requests> rq = requestRepo.findAll();
-		return ResponseEntity.ok().body(rq);
+		List<Requests> rq1 = requestRepo.findAllByRequestStatus("pending");
+		List<Requests> rq2 = requestRepo.findAllByRequestStatus("sent");
+		List<Requests> newList = new ArrayList<Requests>(rq1);
+		newList.addAll(rq2);
+
+		return ResponseEntity.ok().body(newList);
 
 	}
 
 	@PostMapping("/approveRequests")
-	public String approveRequests(@CookieValue(name = "userId", required = false) String uidCookie,
-			@RequestBody  int requestID,
-			@RequestBody String requestResponse) 
+	public ResponseEntity<?> approveRequests(@CookieValue(name = "userId", required = false) String uidCookie,
+			@RequestParam  int requestID,
+			@RequestParam String requestResponse) 
 	{
 //		if (uidCookie == null)return loginPage;
 //		if (!credentials.getById(Integer.parseInt(uidCookie)).get_UserType().equals("administrator"))return homePage;
@@ -573,12 +611,11 @@ public class AllController {
 		System.out.println(requestID);
 		System.out.println(requestResponse);
 		
-		String s = "";
 		if (requestRepo.existsById(requestID)) {
 			Requests requests = requestRepo.getById(requestID);
 			EquipmentAvailability eav = equipmentAvailabilityRepo.getById(requests.getEquipmentID());
 
-			if (requestResponse.equals("accepted")) {
+			if (requestResponse.equalsIgnoreCase("accepted")) {
 				int available = eav.getAvailableamount();
 				int issued = eav.getIssued_amount();
 				if(available>0) 
@@ -587,25 +624,31 @@ public class AllController {
 					requestRepo.saveAndFlush(requests);
 					eav.setAvailableamount(available-1);
 					eav.setIssued_amount(issued+1);
-					s = "requestAccepted";
+					equipmentAvailabilityRepo.saveAndFlush(eav);
+					requestRepo.saveAndFlush(requests);
+					return new ResponseEntity<String>("requestAccepted",HttpStatus.OK);
 				}
 				else 
 				{
-					return "notAvailableToIssue";
+					return new ResponseEntity<String>("notAvailableToIssue",HttpStatus.CONFLICT);
+
 				}
 			}
-			else if (requestResponse.equals("pending")) {
-				s = "requestPending";
+			else if (requestResponse.equalsIgnoreCase("pending")) {
+
 				requests.setRequestStatus("pending");
 				requestRepo.saveAndFlush(requests);
+				return new ResponseEntity<String>("requestPending",HttpStatus.OK);
 			}
-			else if (requestResponse.equals("Rejected")) {
-				s = "requestRejected";
-				requestRepo.deleteById(requestID);
+			else if (requestResponse.equalsIgnoreCase("rejected")) {
+//				requests.setRequestStatus("rejected");
+				requestRepo.delete(requests);
+				requestRepo.flush();
+				return new ResponseEntity<String>("requestRejected",HttpStatus.OK);
+
 			}
-			s = "noRequestFound";
-		}
-		return s;
+			
+		}return new ResponseEntity<String>("noRequestFound",HttpStatus.NOT_FOUND);
 	}
 
 }

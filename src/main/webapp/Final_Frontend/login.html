@@ -28,6 +28,10 @@
 
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand">
+            <img src=" Final_Frontend/lab_icon.png" width="30" height="30" class="d-inline-block align-top" alt="">
+            Lab Inventory System
+        </a>
         <div class="container-fluid">
 
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -59,7 +63,8 @@
 
                 <div class="form-group">
                     <label>User ID</label>
-                    <input name="userId" id="userId" placeholder="Your User ID" class="form-control form-control-lg">
+                    <input name="userId" type="number" id="userId" placeholder="Your User ID"
+                        class="form-control form-control-lg">
                 </div>
 
                 <div class="form-group">
@@ -114,11 +119,14 @@
                         }, 500);
 
                     }
-                    else if (data === `userNotFound`) {
+
+                }).catch(e => {
+                    console.log(e);
+                    if (e.response.data === `userNotFound`) {
                         document.querySelector('#setInvalid').innerHTML = 'User not found';
                         document.querySelector('#setInvalid').style.display = 'block';
                     }
-                    else if (data === `wrongPassword`) {
+                    else if (e.response.data === `wrongPassword`) {
                         document.querySelector('#setInvalid').innerHTML = 'Invalid Password';
                         document.querySelector('#setInvalid').style.display = 'block';
                     }

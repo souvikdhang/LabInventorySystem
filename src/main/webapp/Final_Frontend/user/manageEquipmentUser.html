@@ -29,6 +29,10 @@
     </div>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand">
+            <img src=" Final_Frontend/lab_icon.png" width="30" height="30" class="d-inline-block align-top" alt="">
+            Lab Inventory System
+        </a>
         <div class="container-fluid">
 
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -73,6 +77,7 @@
     </div>
 
     <script>
+        //user
         // document.querySelector('#tbody').innerHTML=getAllUsers();
         function getAllEquipments() {
             axios
@@ -116,13 +121,11 @@
                     console.warn(data2);
                     document.querySelectorAll('#tbody tr').forEach(function (e) {
                         console.dir(e);
-                        if (e.dataset.equipment == data2.equipmentID) {
-                            var button = 'Cancel'
-                            e.lastElementChild.innerHTML = `<button class="` + button.replace(/\s+/g, '').toLowerCase() + ` btn btn-dark">` + button + `</button>`
-                        }
+                        // if (e.dataset.equipment == data2.equipmentID) {
+                        var button = 'Request Exists'
+                        e.lastElementChild.innerHTML = `<button class="` + button.replace(/\s+/g, '').toLowerCase() + ` btn btn-dark" Disabled>` + button + `</button>`
+                        // }
                     })
-
-
 
                 })
         }
@@ -151,7 +154,7 @@
 
                 }).then(response => response.data)
                     .then(data => {
-
+                        window.location.reload();
                         $(this).removeClass('request');
                         $(this).addClass('cancel');
                         $(this).text('Cancel');

@@ -19,6 +19,10 @@
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand">
+            <img src=" Final_Frontend/lab_icon.png" width="30" height="30" class="d-inline-block align-top" alt="">
+            Lab Inventory System
+        </a>
         <div class="container-fluid">
 
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -48,14 +52,14 @@
             <div class="col-sm-3 pt-3">
                 <div class="card" style="background-color:white;">
                     <div class="card-body">
-                        <h4 class="card-title">View Equipment</h4>
-                        <p class="card-text">Please search all the eqyipments here.</p>
+                        <h4 class="card-title">View Equipment and send request</h4>
+                        <p class="card-text">Please search and request the equipments here.</p>
                         <a href="/manageEquipmentPage" class="card-link btn btn-primary">Manage</a>
 
                     </div>
                 </div>
             </div>
-            <div class="col-sm-3 pt-3">
+            <!-- <div class="col-sm-3 pt-3">
                 <div class="card" style="background-color:white;">
                     <div class="card-body">
                         <h4 class="card-title">Send Requests</h4>
@@ -64,13 +68,13 @@
 
                     </div>
                 </div>
-            </div>
+            </div> -->
             <div class="col-sm-3 pt-3">
                 <div class="card" style="background-color:white;">
                     <div class="card-body">
                         <h4 class="card-title">Return Equipments</h4>
                         <p class="card-text">Please return all the users here.</p>
-                        <a href="#" th:href="@{/admin/products}" class="card-link btn btn-primary">Manage</a>
+                        <a href="/manageRequestsPage" class="card-link btn btn-primary">Manage</a>
 
                     </div>
                 </div>

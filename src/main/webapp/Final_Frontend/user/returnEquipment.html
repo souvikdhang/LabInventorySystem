@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" href="Final_Frontend/lab_icon.png">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+        integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <title>Lab Inventory Syatem</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"
+        integrity="sha256-6XMVI0zB8cRzfZjqKcD01PBsAy3FlDASrlC8SxCpInY=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <style>
+        .rotate {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div
+        style="z-index: 10; margin: auto; width: 100vw; height: 100vh;position: absolute; background-color: darkgrey; opacity: 0.7; display: none;">
+        <div
+            style="margin: auto; width: 40%; height: 20%; background-color: aliceblue; opacity: 1;  display: flex; justify-content: center; align-items: center;">
+            hello</div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand">
+            <img src=" Final_Frontend/lab_icon.png" width="30" height="30" class="d-inline-block align-top" alt="">
+            Lab Inventory System
+        </a>
+        <div class="container-fluid">
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto"></ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/homePage">Home</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" onclick="callLogout()" onmouseover="" style="cursor: pointer;">Logout</a>
+                    </li>
+
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+    <div style=" width: 90%; margin:auto">
+        <table class="table table-striped table-fixed">
+            <thead>
+                <tr>
+                    <th class="col-sm-1" scope="col">Request ID</th>
+                    <th class="col-sm-1" scope="col">User ID</th>
+                    <th class="col-sm-1" scope="col">Equipment ID</th>
+                    <th class="col-sm-1" scope="col">Status</th>
+                    <th class="col-sm-1" scope="col">Date of Request</th>
+                    <th class="col-sm-1" scope="col">Details</th>
+                </tr>
+
+            </thead>
+            <tbody id="tbody">
+
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        //user
+        // document.querySelector('#tbody').innerHTML=getAllUsers();
+        function getAllRequestsByUser() {
+            axios({
+                method: 'post',
+                url: '/allRequestByUser'
+            }).then(response => response.data)
+                .then((data) => {
+                    console.log(data);
+                    console.log(data.request.requestID);
+                    var print = '';
+                    var button = '';
+                    button = 'Request';
+                    print += `<tr class="basic-info">
+                                    <th class="0 col-sm-1">`+ data.request.requestID + `</th>
+                                    <td class="labName">`+ data.request.userID + `</td>
+                                    <td class="orgName">`+ data.request.equipmentID + `</td>
+                                    <td class="rackNumber">`+ data.request.requestStatus + `</td>
+                                    <td class="serverStatus">`+ data.request.date + `</td> 
+                                    <td ><button type="button" class="more btn btn-default " ><i class="bi bi-caret-down-fill" style="font-size:16px; "></i></button></td>
+                                </tr>`;
+                    if (data.request.requestStatus == 'accepted') {
+
+                        print += `<tr class="more-info " >
+                                    <td class="drop" colspan="2" style="display: none; position:absolute;">
+                                        <div style="margin:auto;">
+                                            <span class="info" data-requestId="`+ data.request.requestID + `">Equipment Details:&nbsp;</span><br>
+                                            <span><b>Lab Name:&nbsp;&nbsp;</b>`+ data.equipmentDetails.labName + `</span><br>
+                                            <span><b>Org Name:&nbsp;&nbsp;</b>`+ data.equipmentDetails.orgName + `</span><br>
+                                            <span><b>Rack Number:&nbsp;&nbsp;</b>`+ data.equipmentDetails.rackNumber + `</span><br>
+                                            <span><b>IP Address:&nbsp;&nbsp;</b>`+ data.equipmentDetails.serverIPAddress + `</span><br>
+                                            <span><b>Server Name:&nbsp;&nbsp;</b>`+ data.equipmentDetails.serverName + `</span><br>
+                                            <span><b>Server Power:&nbsp;&nbsp;</b>`+ data.equipmentDetails.serverPower + `</span><br>
+                                            <span><b>Server Status:&nbsp;&nbsp;</b>`+ data.equipmentDetails.serverStatus + `</span><br>
+                                            <span><b>Virtual Machine:&nbsp;&nbsp;</b>`+ data.equipmentDetails.virtualMachine + `</span><br>
+                                            <span><b>Login ID:&nbsp;&nbsp;</b>`+ data.equipmentDetails.loginID + `</span><br>
+                                            <span><b>Login Password:&nbsp;&nbsp;</b>`+ data.equipmentDetails.loginPassword + `</span><br>
+
+                                        </div>
+                                    </td>
+                                    <td class="drop" colspan="2" style="display: none;position:absolute; padding-left:30%; padding-top:5%">
+                                        <button class="btn btn-dark" id="return">Return Equipment</button>
+                                    </td>
+                                    <td colspan="2"></td>
+                                </tr>`;
+                    }
+                    else {
+                        print += `<tr class="more-info " >
+                                    <td class="drop" colspan="2" style="display: none; ">
+                                        <div style="margin:auto;">
+                                            <button class="btn btn-dark" id="cancel">cancel Request</button>
+                                        </div>
+                                    </td>
+                                    <td class="drop" colspan="2" style="display: none; ">
+                                        <div class="alert alert-danger setInvalid" style="margin:auto; display: none;">
+                                        </div>
+                                    </td>
+                                    <td colspan="2"></td>
+                                </tr>`;
+                    }
+                    document.querySelector('#tbody').innerHTML = print;
+                })
+
+        }
+        getAllRequestsByUser();
+
+        $(document).ready(function () {
+            $(document).on('click', '.more', function (e) {
+                console.dir($(this).parent().parent().next().children().children());
+                $(this).parent().parent().next().children('.drop').slideToggle(100);
+                $(this).toggleClass('rotate');
+            })
+
+            $(document).on('click', '#cancel', function (e) {
+                console.log($(this).parent().siblings(".equipmentId").text());
+                axios({ method: 'post', url: '/cancelRequest' }).then(response => response.data).then(data => {
+                    console.log(data);
+                    window.location.reload();
+
+                })
+            })
+
+            $(document).on('click', '#return', function (e) {
+                console.log(document.querySelector('.info').dataset.requestid);
+                axios({
+                    method: 'post',
+                    url: '/returnEquipment',
+                    params: { 'requestID': document.querySelector('.info').dataset.requestid }
+                }).then(response => response.data).then(data => {
+                    console.log(data);
+                    window.location.reload();
+
+                })
+            })
+        })
+
+    </script>
+
+
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+        </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
+        </script>
+</body>
+
+</html>

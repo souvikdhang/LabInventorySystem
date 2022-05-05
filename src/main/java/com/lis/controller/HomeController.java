@@ -132,7 +132,7 @@ public class HomeController {
 	 }
 	 
 	 @GetMapping("/manageEquipmentPage")
-		 public String manageUserRequests(@CookieValue(name = "userId", required = false) String uidString) {
+		 public String manageEquipmentPage(@CookieValue(name = "userId", required = false) String uidString) {
 			if (uidString == null) {
 				return "redirect:/";
 			} 
@@ -142,32 +142,73 @@ public class HomeController {
 				if (credentials.getById(userId).get_UserType().equalsIgnoreCase("administrator")) 
 				{
 					System.out.println("admin");
-					return "Final_Frontend/admin/manageEquipmentAdmin.html";
+					return "redirect:/manageEquipmentAdminPage";
 				} 
 				else if (credentials.getById(userId).get_UserType().equalsIgnoreCase("customer"))  
 				{
 					System.out.println("customer");
-					return "Final_Frontend/user/manageEquipmentUser.html";
+					return "redirect:/manageEquipmentUserPage";
 				}
 			}
 			 return "redirect:/";
 
 		}
+	 
+	 @GetMapping("/manageEquipmentAdminPage")
+		public String manageEquipmentAdminPage(@CookieValue(name = "userId", required = false) String uidString) {
+		 	System.out.println(uidString);
+			if (!credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("administrator"))  return "redirect:/";
+		 	return "Final_Frontend/admin/manageEquipmentAdmin.html";
 
-	// @GetMapping("/manageUserRequests")
-	// public String manageUserRequests(@CookieValue(name = "userId", required =
-	// false) String uidString) {
-	// if (uidString == null) {
-	// return "redirect:/";
-	// }
-	// if
-	// (credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("administrator"))
-	// {
-	// return "Final_Frontend/manageUserRequests.html";
-	// } else {
-	// return "redirect:/homePage";
-	// }
-	// }
+		}
+	 
+	 @GetMapping("/manageEquipmentUserPage")
+		public String manageEquipmentUserPage(@CookieValue(name = "userId", required = false) String uidString) {
+		 	System.out.println(uidString);
+			if (credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("administrator"))  return "redirect:/";
+		 	return "Final_Frontend/user/manageEquipmentUser.html";
+
+		}
+
+	 @GetMapping("/manageUserRequestsPage")
+	 public String manageUserRequests(@CookieValue(name = "userId", required =	 false) String uidString) {
+	 if (uidString == null) {
+	 return "redirect:/";
+	 }
+	 if
+	 (credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("administrator"))
+	 {
+	 return "Final_Frontend/admin/manageRequestsAdmin.html";
+	 } else {
+	 return "redirect:/homePage";
+	 }
+	 }
+	 
+	 @GetMapping("/manageRequestsPage")
+	 public String manageRequestsPage(@CookieValue(name = "userId", required =	 false) String uidString) {
+		 if (uidString == null) {
+			 return "redirect:/";
+			 }
+			 if (credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("customer"))
+			 {
+			 return "Final_Frontend/user/returnEquipment.html";
+			 } else {
+			 return "redirect:/homePage";
+			 }
+	 }
+	 
+	 @GetMapping("/increaseEquipment")
+	 public String increaseEquipment(@CookieValue(name = "userId", required =	 false) String uidString) {
+		 if (uidString == null) {
+			 return "redirect:/";
+			 }
+			 if (credentials.getById(Integer.parseInt(uidString)).get_UserType().equalsIgnoreCase("administrator"))
+			 {
+			 return "Final_Frontend/admin/increaseEquipment.html";
+			 } else {
+			 return "redirect:/homePage";
+			 }
+	 }
 
 	// @GetMapping("/manageLabEquipments")
 	// public String manageLabEquipments(@CookieValue(name = "userId", required =
