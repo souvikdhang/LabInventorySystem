@@ -54,11 +54,11 @@
 	    <version>42.2.18</version>
 	</dependency> 
 	
- <!--	<dependency>
+ <dependency>
 	  <groupId>com.heroku</groupId>
 	  <artifactId>webapp-runner-main</artifactId>
 	  <version>9.0.41.0</version>
-</dependency>-->
+</dependency>
 		
 	</dependencies>
 
@@ -71,7 +71,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			
-      <plugin>
+    <!--  <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
           <executions>
@@ -90,7 +90,7 @@
                   </configuration>
               </execution>
           </executions>
-      </plugin>
+      </plugin> -->
 	        
 	        
 		</plugins>
