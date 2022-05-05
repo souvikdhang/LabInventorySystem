@@ -71,6 +71,7 @@
 
             </thead>
             <tbody id="tbody">
+                <td colspan="8"><b>Loading, please wait</b></td>
 
             </tbody>
         </table>
@@ -107,6 +108,8 @@
                                         <td style="width: 20;"><button class="`+ button.toLowerCase() + ` btn btn-dark">` + button + `</button></td>
                                     </tr>`;
                     })
+                    if (data.length == 0) print = '<td colspan="8"><b>No data found</b></td>'
+
                     document.querySelector('#tbody').innerHTML = print;
 
 

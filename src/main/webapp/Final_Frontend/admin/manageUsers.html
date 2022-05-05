@@ -72,6 +72,7 @@
 
             </thead>
             <tbody id="tbody">
+                <td colspan="8"><b>Loading, please wait</b></td>
 
             </tbody>
         </table>
@@ -122,6 +123,8 @@
                                     <td><button class="cancelModify btn btn-secondary">Reset</button></td>
                                  </tr>`;
                     })
+                    if (data.length == 0) print = '<td colspan="8"><b>No data found</b></td>'
+                    console.log(data.length);
                     document.querySelector('#tbody').innerHTML = print;
                 })
         }
@@ -165,12 +168,12 @@
                 //     direction: 'up'
                 // });
             });
-			$(document).on('click', '.form-check-input', function (e) {
-            //$(".form-check-input").click(function () {
-				
-				console.log($(this).is(":checked"));
+            $(document).on('click', '.form-check-input', function (e) {
+                //$(".form-check-input").click(function () {
+
+                console.log($(this).is(":checked"));
                 if ($(this).is(":checked") == false) {
-					
+
                     $(this).parent().find(".form-control").prop("disabled", "true");
                 }
                 if ($(this).is(":checked") == true) {
@@ -180,8 +183,8 @@
             });
 
 
-			$(document).on('click', '.delete', function (e) {
-            //$('.delete').click(function () {
+            $(document).on('click', '.delete', function (e) {
+                //$('.delete').click(function () {
                 console.log(console.log($(this).parent().parent().find(".userId").text()));
                 var obj = { userId: $(this).parent().parent().find(".userId").text() }
                 axios
@@ -199,8 +202,8 @@
 
             })
 
-			$(document).on('click', '.cancelModify', function (e) {
-            //$('.cancelModify').click(function () {
+            $(document).on('click', '.cancelModify', function (e) {
+                //$('.cancelModify').click(function () {
                 var cancelPath = $(this).parent().siblings('td');
                 cancelPath.find('input:text').val('');
                 cancelPath.find('input:text').prop("disabled", "true");
@@ -208,8 +211,8 @@
             });
 
 
-			$(document).on('click', '.submitModify', function (e) {
-            //$('.submitModify').click(function () {
+            $(document).on('click', '.submitModify', function (e) {
+                //$('.submitModify').click(function () {
 
                 // console.log($(this).parent().siblings('.uid').text());
                 // console.log($(this).parent().siblings('td').find('.nameInput').val());

@@ -39,7 +39,7 @@
                         <a class="nav-link" href="/homePage">Home</a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" href="/logout">Logout</a>
+                        <a class="nav-link" onclick="callLogout()" onmouseover="" style="cursor: pointer;">Logout</a>
                     </li>
 
                 </ul>
@@ -140,6 +140,9 @@
     </div>
 
     <script>
+        function callLogout() {
+            axios({ method: 'get', url: '/logout' }).finally(() => { window.location.href = '/' });
+        }
 
         var serverStatus;
         var virtualMachine;

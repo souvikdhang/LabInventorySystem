@@ -106,8 +106,9 @@ public class AllController {
 		String phone= body.get("phoneNumber");
 		String email= body.get("emailId");
 		String userType= body.get("userType");
-		 if(!uidCookie.equals(null)) return loginError();
-		 if(credentials.getById(Integer.parseInt(uidCookie)).get_UserType().equalsIgnoreCase("administrator")) return accessError();
+		 if(uidCookie.equals(null)) return loginError();
+		 System.out.println(credentials.getById(Integer.parseInt(uidCookie)).get_UserType());
+		 if(!credentials.getById(Integer.parseInt(uidCookie)).get_UserType().equalsIgnoreCase("administrator")) return accessError();
 		if (!users.existsByEmail(email)) {
 			UserProfile user = new UserProfile();
 			Credentials userCred = new Credentials();

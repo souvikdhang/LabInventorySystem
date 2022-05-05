@@ -75,7 +75,7 @@
 
             </thead>
             <tbody id="tbody">
-
+                <td colspan="8"><b>Loading, please wait</b></td>
             </tbody>
         </table>
     </div>
@@ -120,6 +120,7 @@
                                         <td colspan="2"></td>
                                     </tr>`
                     })
+                    if (data.length == 0) print = '<td colspan="8"><b>No data found</b></td>'
                     document.querySelector('#tbody').innerHTML = print;
                 })
         }

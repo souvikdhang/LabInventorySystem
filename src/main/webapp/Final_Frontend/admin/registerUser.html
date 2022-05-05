@@ -40,7 +40,7 @@
                         <a class="nav-link" href="/homePage">Home</a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" href="/logout">Logout</a>
+                        <a class="nav-link" onclick="callLogout()" onmouseover="" style="cursor: pointer;">Logout</a>
                     </li>
 
                 </ul>
@@ -128,6 +128,9 @@
 
 
         <script>
+            function callLogout() {
+                axios({ method: 'get', url: '/logout' }).finally(() => { window.location.href = '/' });
+            }
 
             var gender;
             var userType;
@@ -171,13 +174,15 @@
                     .then(response => response.data)
                     .then((data) => {
                         console.log(data);
+                        document.querySelector('#setinvalid').style.display = 'none';
                         document.querySelector('#success').style.display = 'block'
                         document.querySelector('#success').append(data)
                     })
 
                     .catch(
                         (e) => {
-                            document.querySelector('#setInvalid').style.display = 'block';
+                            document.querySelector('#success').style.display = 'none'
+                            document.querySelector('#setinvalid').style.display = 'block';
                         }
                     )
 

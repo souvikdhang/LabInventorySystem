@@ -177,6 +177,10 @@
             })
         })
 
+        function callLogout() {
+            axios({ method: 'get', url: '/logout' }).finally(() => { window.location.href = '/' });
+        }
+
     </script>
 
 
