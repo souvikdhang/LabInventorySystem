@@ -27,9 +27,9 @@
     <style>
         .profile_card {
             width: 30vw;
-            height: 80vh;
-            min-width: 375px;
-            min-height: 650px;
+            height: 60vh;
+            min-width: 340px;
+            min-height: 450px;
             background-color: #f2f2f2;
             margin: auto;
             position: relative;
@@ -62,17 +62,22 @@
             position: relative;
             /* display: table; */
             /* top: 60%; */
+            display: flex;
             align-self: center;
             vertical-align: middle;
             margin: auto;
             text-align: center;
+            flex-wrap: wrap;
+            width: 100%;
         }
+
 
         .text {
             align-self: center;
             display: table;
             text-align: center;
             margin: auto;
+            width: 100%;
         }
 
         .popup_container {
@@ -86,24 +91,34 @@
         }
 
         .popup_message {
-            position: absolute;
-            padding-top: 2%;
-            padding-bottom: 2%;
-            padding-left: 3%;
-            padding-right: 3%;
+            position: relative;
+            padding-top: 40px;
+            padding-bottom: 40px;
+            padding-left: 30px;
+            padding-right: 30px;
             background-color: white;
-            margin-top: 20vh;
-            margin-left: 30%;
+            /* margin-top: 20vh; */
+            /* margin-left: 30%; */
+            /* left: 0;
+            right: 0; */
             height: 30%;
             width: 40%;
-            /* margin: auto; */
+            margin: auto;
             opacity: 1;
             display: none;
             height: 50vh;
             flex-wrap: wrap;
             z-index: 11;
             border-radius: 30px;
+            min-width: 300px;
+            min-height: 400px;
+        }
 
+        .popup_message_container {
+            position: absolute;
+            display: none;
+            width: 100vw;
+            height: 100vh;
         }
 
         .form-control {
@@ -117,15 +132,17 @@
     <div class="popup_container popup">
 
     </div>
-    <div class="popup_message popup">
-        <label for="password">Old Password</label><br>
-        <input class="form-control form-control-lg" type="password"><br>
-        <label for="password">New Password</label><br>
-        <input class="form-control form-control-lg" type="password"><br>
-        <label for="password">Confirm Password</label><br>
-        <input class="form-control form-control-lg" type="password"><br>
-        <label for="invalid"></label><br>
-        <button id="confirm" class="btn btn-dark" style="margin: auto;margin-top: 7%;">confirm</button>
+    <div class="popup_message_container popup">
+        <div class="popup_message popup">
+            <label for="password">Old Password:</label><br>
+            <input class="form-control form-control-lg" type="password"><br>
+            <label for="password">New Password:</label><br>
+            <input class="form-control form-control-lg" type="password"><br>
+            <label for="password">Confirm Password:</label><br>
+            <input class="form-control form-control-lg" type="password"><br>
+            <label for="invalid"></label><br>
+            <button id="confirm" class="btn btn-dark" style="margin: auto;margin-top: 7%;">confirm</button>
+        </div>
     </div>
     <div
         style="z-index: 10; margin: auto; width: 100vw; height: 100vh;position: absolute; background-color: darkgrey; opacity: 0.7; display: none;">
@@ -167,7 +184,10 @@
             <image class="user_image"
                 src="https://static.vecteezy.com/system/resources/previews/002/534/006/original/social-media-chatting-online-blank-profile-picture-head-and-body-icon-people-standing-icon-grey-background-free-vector.jpg">
         </div><br>
-        <div class="profile_text"><b>Loading<br>Please wait</b></div>
+        <div class="profile_text">
+            <span class="text"><b>Loading</b></span><br>
+            <span class="text"><b>Please wait</b></span><br>
+        </div>
         <!-- <div class="profile_text">
         </div> -->
     </div>
@@ -196,8 +216,14 @@
 
         $(document).ready(function () {
             $(document).on('click', '#change', function (e) {
-                $('.popup_container').css({ 'display': 'flex' })
-                $('.popup_message').css({ 'display': 'flex' })
+                // $('.popup_container').css({ 'display': 'flex' })
+                $('.popup').css({ 'display': 'flex' })
+            })
+
+            $(document).on('click', '.popup_container', function (e) {
+                // $('.popup_container').css({ 'display': 'none' })
+                console.log($('.popup'));
+                $('.popup').css({ 'display': 'none' })
             })
 
             // $(document).on('click', '#confirm', function (e) {
@@ -212,6 +238,9 @@
             //     })
             // })
         })
+        function callLogout() {
+            axios({ method: 'get', url: '/logout' }).finally(() => { window.location.href = '/' });
+        }
     </script>
 
 
