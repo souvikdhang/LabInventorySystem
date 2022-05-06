@@ -253,10 +253,12 @@ public class AllController {
 		int userId = Integer.parseInt(uidCookie);
 		String oldPassword = body.get("oldPassword");
 		String newPassword = body.get("newPassword");
+		System.out.println(newPassword);
 		if(credentials.existsById(userId)) {
 			Credentials credential = credentials.getById(userId);
 			if(credential.get_password().equals(oldPassword)) {
 				credential.set_password(newPassword);
+				credentials.saveAndFlush(credential);
 				return new ResponseEntity<String>("passwordSet",HttpStatus.OK);
 			}
 			else return new ResponseEntity<String>("wrongpassword",HttpStatus.UNAUTHORIZED);

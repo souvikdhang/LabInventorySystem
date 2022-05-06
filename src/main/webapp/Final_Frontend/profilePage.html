@@ -23,6 +23,9 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
         </script>
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
 
     <style>
         .profile_card {
@@ -111,7 +114,7 @@
             z-index: 11;
             border-radius: 30px;
             min-width: 300px;
-            min-height: 400px;
+            min-height: 510px;
         }
 
         .popup_message_container {
@@ -121,10 +124,10 @@
             height: 100vh;
         }
 
-        .form-control {
-            /* position: relative; */
-            /* display: flex; */
-        }
+        /* .form-control {
+            position: relative; 
+         display: flex;
+        } */
     </style>
 </head>
 
@@ -135,21 +138,29 @@
     <div class="popup_message_container popup">
         <div class="popup_message popup">
             <label for="password">Old Password:</label><br>
-            <input class="form-control form-control-lg" type="password"><br>
+            <input id="oldPassword" class="form-control form-control-lg password" type="password"><br>
             <label for="password">New Password:</label><br>
-            <input class="form-control form-control-lg" type="password"><br>
+            <input id="newPassword" class="form-control form-control-lg password" type="password"><br>
             <label for="password">Confirm Password:</label><br>
-            <input class="form-control form-control-lg" type="password"><br>
-            <label for="invalid"></label><br>
-            <button id="confirm" class="btn btn-dark" style="margin: auto;margin-top: 7%;">confirm</button>
+            <input id="confirmPassword" class="form-control form-control-lg password" type="password"><br>
+            <span>&nbsp;</span><br>
+
+            <div id="check" class="form-check form-switch" style="padding-top: 20px;">
+                <input id="showPassword" type="checkbox" data-toggle="toggle" data-size="sm">
+                <label class="form-check-label" for="flexSwitchCheckDefault">Show Password</label>
+            </div>
+
+            <p class="text"></p><br>
+            <span id="invalid" class="alert alert-danger text" style="display: none;" role="alert"></span><br>
+            <button id="confirm" class="btn btn-dark" style="margin: auto; margin-top: 10px;">confirm</button>
         </div>
     </div>
-    <div
+    <!-- <div
         style="z-index: 10; margin: auto; width: 100vw; height: 100vh;position: absolute; background-color: darkgrey; opacity: 0.7; display: none;">
         <div
             style="margin: auto; width: 40%; height: 20%; background-color: aliceblue; opacity: 1;  display: flex; justify-content: center; align-items: center;">
             hello</div>
-    </div>
+    </div> -->
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand">
@@ -222,21 +233,76 @@
 
             $(document).on('click', '.popup_container', function (e) {
                 // $('.popup_container').css({ 'display': 'none' })
-                console.log($('.popup'));
+                // console.log($('#oldPassword'));
                 $('.popup').css({ 'display': 'none' })
             })
 
-            // $(document).on('click', '#confirm', function (e) {
-            //     axios({
-            //         method: 'post',
-            //         url: '/changePassword',
-            //         params: { 'requestID': document.querySelector('.info').dataset.requestid }
-            //     }).then(response => response.data).then(data => {
-            //         console.log(data);
-            //         window.location.reload();
+            $(document).on('click', '#confirm', function (e) {
+                var oldPassword = $('#oldPassword').val();
+                var newPassword = $('#newPassword').val();
+                var confirmPassword = $('#confirmPassword').val();
+                // console.log(oldPassword)
+                // console.log(newPassword)
+                // console.log(confirmPassword)
 
-            //     })
-            // })
+                if (oldPassword === '') {
+                    document.querySelector('#invalid').style.display = 'table';
+                    document.querySelector('#invalid').innerHTML = 'Please enter current password';
+                    return;
+                }
+                else if (newPassword === '') {
+                    document.querySelector('#invalid').style.display = 'table';
+                    document.querySelector('#invalid').innerHTML = 'Please enter new password';
+                    return;
+                }
+                else if (confirmPassword === '') {
+                    document.querySelector('#invalid').style.display = 'table';
+                    document.querySelector('#invalid').innerHTML = 'Please enter confirm password';
+                    return;
+                }
+                else if (newPassword !== confirmPassword) {
+                    document.querySelector('#invalid').style.display = 'table';
+                    document.querySelector('#invalid').innerHTML = 'Password does not match';
+                    return;
+                }
+                else {
+                    document.querySelector('#invalid').style.display = 'none';
+                }
+                console.log('asd')
+                axios({
+                    method: 'post',
+                    url: '/changePassword',
+                    data: {
+                        oldPassword,
+                        newPassword,
+                        confirmPassword
+                    }
+                })
+                    .then(response => response.data)
+                    .then(data => {
+                        console.log(data);
+                        document.querySelector('.popup_message').innerHTML = `<span class="text" style="font-size:18px"><b>Successfully changed password</b></span>`
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000)
+                    })
+                    .catch(e => {
+                        if (e.response.data === 'wrongpassword') {
+                            document.querySelector('#invalid').style.display = 'table';
+                            document.querySelector('#invalid').innerHTML = 'Enter correct password';
+                        }
+                        else {
+                            document.querySelector('#invalid').style.display = 'table';
+                            document.querySelector('#invalid').innerHTML = 'Some error occured';
+                        }
+                    })
+
+            })
+
+            $(document).on('click', '#check', function (e) {
+                console.log($('#showPassword').is(":checked"))
+                $('#showPassword').is(":checked") ? $('.password').attr('type', 'text') : $('.password').attr('type', 'password');
+            })
         })
         function callLogout() {
             axios({ method: 'get', url: '/logout' }).finally(() => { window.location.href = '/' });
