@@ -242,6 +242,27 @@ public class AllController {
 		return new ResponseEntity<List<UserProfile>>(userList,HttpStatus.OK);
 
 	}
+	
+	@PostMapping("/changePassword")
+	public ResponseEntity<?> changePassword(@CookieValue(name = "userId", required = false) String uidCookie, @RequestBody Map<String, String> body)
+	{
+		if (uidCookie == null) 
+		{
+			return loginError();
+		}
+		int userId = Integer.parseInt(uidCookie);
+		String oldPassword = body.get("oldPassword");
+		String newPassword = body.get("newPassword");
+		if(credentials.existsById(userId)) {
+			Credentials credential = credentials.getById(userId);
+			if(credential.get_password().equals(oldPassword)) {
+				credential.set_password(newPassword);
+				return new ResponseEntity<String>("passwordSet",HttpStatus.OK);
+			}
+			else return new ResponseEntity<String>("wrongpassword",HttpStatus.UNAUTHORIZED);
+		}
+		else return new ResponseEntity<String>("userNotFound",HttpStatus.NOT_FOUND);
+	}
 
 	@PostMapping("/addEquipment")
 	@Transactional

@@ -74,11 +74,59 @@
             text-align: center;
             margin: auto;
         }
+
+        .popup_container {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            background-color: black;
+            opacity: 0.6;
+            z-index: 10;
+            display: none;
+        }
+
+        .popup_message {
+            position: absolute;
+            padding-top: 2%;
+            padding-bottom: 2%;
+            padding-left: 3%;
+            padding-right: 3%;
+            background-color: white;
+            margin-top: 20vh;
+            margin-left: 30%;
+            height: 30%;
+            width: 40%;
+            /* margin: auto; */
+            opacity: 1;
+            display: none;
+            height: 50vh;
+            flex-wrap: wrap;
+            z-index: 11;
+            border-radius: 30px;
+
+        }
+
+        .form-control {
+            /* position: relative; */
+            /* display: flex; */
+        }
     </style>
 </head>
 
 <body>
+    <div class="popup_container popup">
 
+    </div>
+    <div class="popup_message popup">
+        <label for="password">Old Password</label><br>
+        <input class="form-control form-control-lg" type="password"><br>
+        <label for="password">New Password</label><br>
+        <input class="form-control form-control-lg" type="password"><br>
+        <label for="password">Confirm Password</label><br>
+        <input class="form-control form-control-lg" type="password"><br>
+        <label for="invalid"></label><br>
+        <button id="confirm" class="btn btn-dark" style="margin: auto;margin-top: 7%;">confirm</button>
+    </div>
     <div
         style="z-index: 10; margin: auto; width: 100vw; height: 100vh;position: absolute; background-color: darkgrey; opacity: 0.7; display: none;">
         <div
@@ -113,6 +161,7 @@
             </div>
         </div>
     </nav>
+
     <div class="profile_card">
         <div class="profile_logo">
             <image class="user_image"
@@ -120,9 +169,10 @@
         </div><br>
         <div class="profile_text"><b>Loading<br>Please wait</b></div>
         <!-- <div class="profile_text">
-
         </div> -->
     </div>
+
+
 
     <script>
         axios
@@ -140,11 +190,28 @@
                             <span class="text"><b>Email:&nbsp;</b>`+ data.email + `</span><br>
                             <span class="text"><b>Phone Number:&nbsp;</b>`+ data.phone_number + `</span><br>
                             <span class="text"></span><br>
-                            <span class="text"><button class="btn btn-dark">Change Password</button></span><br>`
+                            <span class="text"><button id="change" class="btn btn-dark">Change Password</button></span><br>`
                 document.querySelector('.profile_text').innerHTML = print;
-
             })
 
+        $(document).ready(function () {
+            $(document).on('click', '#change', function (e) {
+                $('.popup_container').css({ 'display': 'flex' })
+                $('.popup_message').css({ 'display': 'flex' })
+            })
+
+            // $(document).on('click', '#confirm', function (e) {
+            //     axios({
+            //         method: 'post',
+            //         url: '/changePassword',
+            //         params: { 'requestID': document.querySelector('.info').dataset.requestid }
+            //     }).then(response => response.data).then(data => {
+            //         console.log(data);
+            //         window.location.reload();
+
+            //     })
+        })
+        })
     </script>
 
 
