@@ -3,21 +3,19 @@ package com.lis.model;
 import java.text.ParseException;
 import java.time.LocalDate;
 
-import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 
-import org.hibernate.annotations.DynamicUpdate;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import org.springframework.stereotype.Component;
 
-
+@JsonIgnoreProperties({"hibernateLazyInitializer"})
 @Component
 @Entity
-@DynamicUpdate
-@Cacheable
 public class UserProfile {
 	
 	@Id

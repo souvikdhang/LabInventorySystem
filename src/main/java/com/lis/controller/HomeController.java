@@ -142,6 +142,14 @@ public class HomeController {
 			return "redirect:/homePage";
 		}
 	}
+	
+	@GetMapping("/UserProfilePage")
+	public String UserProfilePage(@CookieValue(name = "userId", required = false) String uidString) {
+		if (uidString == null) {
+			return "redirect:/";
+		}
+			return "Final_Frontend/profilePage.html";
+	}
 
 	@GetMapping("/manageEquipmentPage")
 	public String manageEquipmentPage(@CookieValue(name = "userId", required = false) String uidString) {

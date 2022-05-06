@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" href="Final_Frontend/lab_icon.png">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+        integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <title>Lab Inventory System</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"
+        integrity="sha256-6XMVI0zB8cRzfZjqKcD01PBsAy3FlDASrlC8SxCpInY=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+        </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
+        </script>
+
+    <style>
+        .profile_card {
+            width: 30vw;
+            height: 80vh;
+            min-width: 375px;
+            min-height: 650px;
+            background-color: #f2f2f2;
+            margin: auto;
+            position: relative;
+            display: flexbox;
+            margin-top: 5vh;
+            border-radius: 50px;
+            box-shadow: 0 0 20px #d0d0d0;
+        }
+
+        .profile_logo {
+            /* background-image: ; */
+            width: 30%;
+            margin: auto;
+            border-radius: 50%;
+            padding-top: 10%;
+            bottom: 10px;
+            position: relative;
+            display: flex;
+            align-self: center;
+        }
+
+        .user_image {
+            width: 100%;
+            border-radius: 50%;
+
+        }
+
+        .profile_text {
+            margin-bottom: 30%;
+            position: relative;
+            /* display: table; */
+            /* top: 60%; */
+            align-self: center;
+            vertical-align: middle;
+            margin: auto;
+            text-align: center;
+        }
+
+        .text {
+            align-self: center;
+            display: table;
+            text-align: center;
+            margin: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div
+        style="z-index: 10; margin: auto; width: 100vw; height: 100vh;position: absolute; background-color: darkgrey; opacity: 0.7; display: none;">
+        <div
+            style="margin: auto; width: 40%; height: 20%; background-color: aliceblue; opacity: 1;  display: flex; justify-content: center; align-items: center;">
+            hello</div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand">
+            <img src=" Final_Frontend/lab_icon.png" width="30" height="30" class="d-inline-block align-top" alt="">
+            Lab Inventory System
+        </a>
+        <div class="container-fluid">
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto"></ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/homePage">Home</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" onclick="callLogout()" onmouseover="" style="cursor: pointer;">Logout</a>
+                    </li>
+
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+    <div class="profile_card">
+        <div class="profile_logo">
+            <image class="user_image"
+                src="https://static.vecteezy.com/system/resources/previews/002/534/006/original/social-media-chatting-online-blank-profile-picture-head-and-body-icon-people-standing-icon-grey-background-free-vector.jpg">
+        </div><br>
+        <div class="profile_text"><b>Loading<br>Please wait</b></div>
+        <!-- <div class="profile_text">
+
+        </div> -->
+    </div>
+
+    <script>
+        axios
+            ({
+                method: 'post',
+                url: '/getUser'
+            }).then(response => response.data)
+            .then((data) => {
+                console.log(data)
+                var print = `<span class="text"><b>User ID:&nbsp;</b>` + data.user_id + `</span><br>
+                            <span class="text"><b>Name:&nbsp;</b>`+ data.name + `</span><br>
+                            <span class="text"><b>Date Of Birth:&nbsp;</b>`+ data.dob + `</span><br>
+                            <span class="text"><b>Gender:&nbsp;</b>`+ data.gender + `</span><br>
+                            <span class="text"><b>Address:&nbsp;</b>`+ data.address + `</span><br>
+                            <span class="text"><b>Email:&nbsp;</b>`+ data.email + `</span><br>
+                            <span class="text"><b>Phone Number:&nbsp;</b>`+ data.phone_number + `</span><br>
+                            <span class="text"></span><br>
+                            <span class="text"><button class="btn btn-dark">Change Password</button></span><br>`
+                document.querySelector('.profile_text').innerHTML = print;
+
+            })
+
+    </script>
+
+
+</body>
+
+</html>

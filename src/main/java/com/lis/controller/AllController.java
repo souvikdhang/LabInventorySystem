@@ -60,7 +60,6 @@ public class AllController {
 		return new ResponseEntity<String>("accessDenied", headers, HttpStatus.UNAUTHORIZED);
 	}
 	
-	static int admin_signature = 147;
 
 
 	@Transactional
@@ -198,6 +197,30 @@ public class AllController {
 			return new ResponseEntity<Integer>(user.getUser_id(),HttpStatus.OK);
 		} else
 			return new ResponseEntity<String>("userNotFound",HttpStatus.NOT_FOUND);
+	}
+	
+	@Transactional
+	@PostMapping("/getUser")
+	public ResponseEntity<?> getUser(@CookieValue(name = "userId", required = false) String uidCookie)
+	{
+		if (uidCookie == null) {
+			return loginError();
+			}
+		System.out.println("a");
+		int userId = Integer.parseInt(uidCookie);
+//		if (!credentials.getById(userId).get_UserType().equalsIgnoreCase("customer")) {
+//			return accessError();
+//			}
+		System.out.println(userId);
+		if(users.existsById(userId)) {
+			UserProfile user = users.getById(userId);
+			System.out.println(user);
+			Object obj = user;
+			return new ResponseEntity<Object>(obj,HttpStatus.OK);
+		}
+		else {
+			return new ResponseEntity<String>("userNotFound",HttpStatus.NOT_FOUND);
+		}
 	}
 
 	@Transactional
@@ -553,34 +576,34 @@ public class AllController {
 		}
 	}
 
-	@PostMapping("/seeRequestStatus")
-	@Transactional
-	public String seeRequestStatus(@CookieValue(name = "userId", required = false) String uidCookie, @RequestParam("user_id") int user_id, @RequestParam("password") String password,
-			@RequestParam("requestID") int requestID) {
-		String s = "";
-		int dispatched_id = (requestID * admin_signature) + (admin_signature - requestID);
-
-		if (users.existsById(user_id)) {
-			Credentials cr = credentials.findById(user_id).orElse(null);
-			if ((cr.get_password()).equals(password)) {
-				Requests requests = requestRepo.findById(requestID).orElse(null);
-				if ((requests.getRequestStatus()).equals("accepted")) {
-					s = "the status is " + requests.getRequestStatus()
-							+ " your uid is your requestID and your password is "
-							+ dispatched_id;
-				} else {
-					s = "the status is " + requests.getRequestStatus();
-				}
-
-			}
-		}
-
-		else {
-			s = "user doesn't exists";
-		}
-
-		return s;
-	}
+//	@PostMapping("/seeRequestStatus")
+//	@Transactional
+//	public String seeRequestStatus(@CookieValue(name = "userId", required = false) String uidCookie, @RequestParam("user_id") int user_id, @RequestParam("password") String password,
+//			@RequestParam("requestID") int requestID) {
+//		String s = "";
+//		int dispatched_id = (requestID * admin_signature) + (admin_signature - requestID);
+//
+//		if (users.existsById(user_id)) {
+//			Credentials cr = credentials.findById(user_id).orElse(null);
+//			if ((cr.get_password()).equals(password)) {
+//				Requests requests = requestRepo.findById(requestID).orElse(null);
+//				if ((requests.getRequestStatus()).equals("accepted")) {
+//					s = "the status is " + requests.getRequestStatus()
+//							+ " your uid is your requestID and your password is "
+//							+ dispatched_id;
+//				} else {
+//					s = "the status is " + requests.getRequestStatus();
+//				}
+//
+//			}
+//		}
+//
+//		else {
+//			s = "user doesn't exists";
+//		}
+//
+//		return s;
+//	}
 
 	@PostMapping("/viewRequests")
 	public ResponseEntity<?> viewUserRequests(@CookieValue(name = "userId", required = false) String uidCookie) {
